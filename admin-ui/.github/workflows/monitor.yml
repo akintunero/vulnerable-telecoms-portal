@@ -1,0 +1,51 @@
+name: Monitor
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Check application health
+      run: |
+        curl -f http://localhost:3000/health || exit 1
+
+    - name: Check database connection
+      run: |
+        mysql -h ${{ secrets.DB_HOST }} -u ${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }} ${{ secrets.DB_NAME }} -e "SELECT 1" || exit 1
+
+    - name: Check Redis connection
+      run: |
+        redis-cli -h ${{ secrets.REDIS_HOST }} -p ${{ secrets.REDIS_PORT }} -a ${{ secrets.REDIS_PASSWORD }} ping || exit 1
+
+    - name: Check disk space
+      run: |
+        df -h | grep -v "Filesystem" | awk '{print $5}' | sed 's/%//' | while read usage; do
+          if [ $usage -gt 90 ]; then
+            echo "Disk usage is above 90%"
+            exit 1
+          fi
+        done
+
+    - name: Check memory usage
+      run: |
+        free | grep Mem | awk '{print $3/$2 * 100.0}' | while read usage; do
+          if [ $(echo "$usage > 90" | bc) -eq 1 ]; then
+            echo "Memory usage is above 90%"
+            exit 1
+          fi
+        done
+
+    - name: Check CPU usage
+      run: |
+        top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | awk '{print 100 - $1}' | while read usage; do
+          if [ $(echo "$usage > 90" | bc) -eq 1 ]; then
+            echo "CPU usage is above 90%"
+            exit 1
+          fi
+        done 

@@ -1,0 +1,9 @@
+zone "telisp.com" {
+    type master;
+    file "/etc/bind/zones/telisp.com.zone";
+};
+
+zone "flag.telisp.com" {
+    type master;
+    file "/etc/bind/zones/flag.telisp.com.zone";
+}; 

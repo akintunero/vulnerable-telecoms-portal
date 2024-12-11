@@ -1,0 +1,14 @@
+$TTL    86400
+@       IN      SOA     ns1.telleakisp.local. admin.telleakisp.local. (
+                        2024060801      ; Serial
+                        3600            ; Refresh
+                        1800            ; Retry
+                        604800          ; Expire
+                        86400 )         ; Minimum TTL
+
+@       IN      NS      ns1.telleakisp.local.
+@       IN      A       10.0.0.1
+ns1     IN      A       10.0.0.1
+www     IN      A       10.0.0.2
+mail    IN      A       10.0.0.3
+ftp     IN      A       10.0.0.4 

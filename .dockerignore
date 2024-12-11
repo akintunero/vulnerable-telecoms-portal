@@ -1,0 +1,58 @@
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Docker files
+docker-compose.yml
+docker-compose.yml.bak
+Dockerfile
+.dockerignore
+
+# Logs
+*.log
+logs/
+run.log
+build.log
+docker-run.log
+docker-build.log
+
+# Environment
+.env
+.env.*
+
+# Data directories
+mysql-data/
+redis_data/
+dhcp_leases/
+invoices/
+email-dump/
+git-repo/
+netflow/
+
+# Node modules
+**/node_modules/
+**/dist/
+**/build/
+
+# Python
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.Python
+**/env/
+**/venv/
+**/.env/
+**/.venv/
+**/ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db 

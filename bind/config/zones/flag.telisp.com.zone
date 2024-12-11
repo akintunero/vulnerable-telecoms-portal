@@ -1,0 +1,11 @@
+$TTL    86400
+@       IN      SOA     flag.telisp.com. admin.telisp.com. (
+                        2024031501      ; Serial
+                        3600            ; Refresh
+                        1800            ; Retry
+                        604800          ; Expire
+                        86400 )         ; Minimum TTL
+
+@       IN      NS      ns1.telisp.com.
+@       IN      A       127.0.0.1
+@       IN      TXT     "flag3_dns_bind_2024" 

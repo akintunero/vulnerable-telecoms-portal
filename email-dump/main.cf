@@ -1,0 +1,52 @@
+smtpd_banner = $myhostname ESMTP TelLeak ISP Mail Server
+biff = yes
+append_dot_mydomain = no
+readme_directory = no
+compatibility_level = 2
+
+# TLS parameters
+smtpd_tls_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+smtpd_tls_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+smtpd_use_tls=yes
+smtpd_tls_auth_only=no
+smtpd_tls_security_level=none
+smtpd_tls_mandatory_protocols=!SSLv2,!SSLv3,!TLSv1,!TLSv1.1
+smtpd_tls_mandatory_ciphers=medium
+tls_medium_cipherlist=HIGH:!aNULL:!MD5
+
+# Authentication
+smtpd_sasl_type=dovecot
+smtpd_sasl_path=private/auth
+smtpd_sasl_auth_enable=yes
+smtpd_sasl_security_options=noanonymous
+smtpd_sasl_local_domain=$myhostname
+
+# Network restrictions
+mynetworks=127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 10.0.0.0/8 10.0.99.0/24
+inet_interfaces=all
+inet_protocols=all
+
+# Recipient restrictions
+smtpd_recipient_restrictions=
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_unauth_destination
+
+# Sender restrictions
+smtpd_sender_restrictions=
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_non_fqdn_sender,
+    reject_unknown_sender_domain
+
+# Relay restrictions
+smtpd_relay_restrictions=
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    defer_unauth_destination
+
+myhostname = mail.telleakisp.local
+mydomain = telleakisp.local
+myorigin = $mydomain
+mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+home_mailbox = Maildir/ 

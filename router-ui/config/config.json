@@ -1,0 +1,19 @@
+{
+    "api": {
+        "baseUrl": "http://api:5000",
+        "timeout": 5000
+    },
+    "auth": {
+        "sessionTimeout": 3600,
+        "maxLoginAttempts": 3
+    },
+    "logging": {
+        "level": "info",
+        "file": "/var/log/router-ui.log"
+    },
+    "features": {
+        "enableBGP": true,
+        "enableSNMP": true,
+        "enableDHCP": true
+    }
+} 

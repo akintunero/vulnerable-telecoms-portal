@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TelISP Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 250px;
+            background: #2c3e50;
+            padding: 20px;
+            color: white;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .metric-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-link {
+            color: white;
+            margin-bottom: 10px;
+        }
+        .nav-link:hover {
+            background: #34495e;
+            color: white;
+        }
+        .nav-link.active {
+            background: #3498db;
+        }
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .status-good { background: #2ecc71; }
+        .status-warning { background: #f1c40f; }
+        .status-critical { background: #e74c3c; }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h4 class="mb-4">TelISP Admin</h4>
+        <nav class="nav flex-column">
+            <a class="nav-link active" href="/"><i class='bx bxs-dashboard'></i> Dashboard</a>
+            <a class="nav-link" href="/network"><i class='bx bxs-network-chart'></i> Network</a>
+            <a class="nav-link" href="/customers"><i class='bx bxs-user-detail'></i> Customers</a>
+            <a class="nav-link" href="/security"><i class='bx bxs-shield'></i> Security</a>
+            <a class="nav-link" href="/settings"><i class='bx bxs-cog'></i> Settings</a>
+            <a class="nav-link" href="/logout"><i class='bx bxs-log-out'></i> Logout</a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h2 class="mb-4">Dashboard Overview</h2>
+        
+        <!-- Network Performance Overview -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <h6>Network Uptime</h6>
+                    <h3>99.98%</h3>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" style="width: 99.98%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <h6>Average Latency</h6>
+                    <h3>45ms</h3>
+                    <div class="progress">
+                        <div class="progress-bar bg-info" style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <h6>Bandwidth Usage</h6>
+                    <h3>78%</h3>
+                    <div class="progress">
+                        <div class="progress-bar bg-warning" style="width: 78%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <h6>Active Devices</h6>
+                    <h3>2,547</h3>
+                    <div class="progress">
+                        <div class="progress-bar bg-primary" style="width: 85%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Quality & Customer Experience -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5>Network Traffic</h5>
+                    <canvas id="networkTrafficChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5>Traffic Distribution</h5>
+                    <canvas id="trafficDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financial & Business KPIs -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <h6>Monthly Revenue</h6>
+                    <h3>$127,350</h3>
+                    <small class="text-success">+5.2% from last month</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <h6>Active Subscriptions</h6>
+                    <h3>2,389</h3>
+                    <small class="text-success">+3.1% from last month</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <h6>Churn Rate</h6>
+                    <h3>1.2%</h3>
+                    <small class="text-danger">+0.3% from last month</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <h6>Average ARPU</h6>
+                    <h3>$49.95</h3>
+                    <small class="text-success">+2.1% from last month</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security & Compliance -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5>Security Status</h5>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Status</th>
+                                    <th>Last Updated</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Firewall Status</td>
+                                    <td><span class="status-indicator status-good"></span> Active</td>
+                                    <td>2 mins ago</td>
+                                </tr>
+                                <tr>
+                                    <td>Intrusion Detection</td>
+                                    <td><span class="status-indicator status-good"></span> No Threats</td>
+                                    <td>5 mins ago</td>
+                                </tr>
+                                <tr>
+                                    <td>SSL Certificates</td>
+                                    <td><span class="status-indicator status-warning"></span> 15 days left</td>
+                                    <td>1 hour ago</td>
+                                </tr>
+                                <tr>
+                                    <td>GDPR Compliance</td>
+                                    <td><span class="status-indicator status-good"></span> Compliant</td>
+                                    <td>1 day ago</td>
+                                </tr>
+                                <tr>
+                                    <td>NDPR Compliance</td>
+                                    <td><span class="status-indicator status-warning"></span> Review Required</td>
+                                    <td>2 days ago</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5>Recent Security Events</h5>
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Suspicious Login Attempt</h6>
+                                <small>3 mins ago</small>
+                            </div>
+                            <p class="mb-1">Multiple failed login attempts from IP 192.168.1.100</p>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Firewall Rule Update</h6>
+                                <small>1 hour ago</small>
+                            </div>
+                            <p class="mb-1">New firewall rules applied for DDoS protection</p>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">SSL Certificate Warning</h6>
+                                <small>2 hours ago</small>
+                            </div>
+                            <p class="mb-1">SSL certificate for api.telleakisp.com expires in 15 days</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Operational Insights -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5>System Health</h5>
+                    <canvas id="systemHealthChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5>Service Status</h5>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Service</th>
+                                    <th>Status</th>
+                                    <th>Uptime</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Web Server</td>
+                                    <td><span class="status-indicator status-good"></span> Running</td>
+                                    <td>99.99%</td>
+                                </tr>
+                                <tr>
+                                    <td>Database</td>
+                                    <td><span class="status-indicator status-good"></span> Running</td>
+                                    <td>99.95%</td>
+                                </tr>
+                                <tr>
+                                    <td>DNS Server</td>
+                                    <td><span class="status-indicator status-good"></span> Running</td>
+                                    <td>99.98%</td>
+                                </tr>
+                                <tr>
+                                    <td>Email Server</td>
+                                    <td><span class="status-indicator status-warning"></span> High Load</td>
+                                    <td>99.90%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Network Traffic Chart
+        const trafficCtx = document.getElementById('networkTrafficChart').getContext('2d');
+        new Chart(trafficCtx, {
+            type: 'line',
+            data: {
+                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                datasets: [{
+                    label: 'Inbound Traffic',
+                    data: [65, 59, 80, 81, 56, 55],
+                    borderColor: '#3498db',
+                    tension: 0.4
+                }, {
+                    label: 'Outbound Traffic',
+                    data: [28, 48, 40, 19, 86, 27],
+                    borderColor: '#2ecc71',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Traffic Distribution Chart
+        const distributionCtx = document.getElementById('trafficDistributionChart').getContext('2d');
+        new Chart(distributionCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['HTTP/HTTPS', 'FTP', 'DNS', 'Email', 'Other'],
+                datasets: [{
+                    data: [45, 25, 15, 10, 5],
+                    backgroundColor: ['#3498db', '#2ecc71', '#f1c40f', '#e74c3c', '#95a5a6']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // System Health Chart
+        const healthCtx = document.getElementById('systemHealthChart').getContext('2d');
+        new Chart(healthCtx, {
+            type: 'bar',
+            data: {
+                labels: ['CPU', 'Memory', 'Disk', 'Network'],
+                datasets: [{
+                    label: 'Usage %',
+                    data: [65, 78, 45, 82],
+                    backgroundColor: ['#3498db', '#2ecc71', '#f1c40f', '#e74c3c']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

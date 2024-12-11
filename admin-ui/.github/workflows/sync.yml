@@ -1,0 +1,42 @@
+name: Sync
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Sync with remote repository
+      run: |
+        git fetch upstream
+        git checkout master
+        git merge upstream/master
+        git push origin master
+
+    - name: Sync with remote database
+      run: |
+        mysqldump -h ${{ secrets.REMOTE_DB_HOST }} -u ${{ secrets.REMOTE_DB_USER }} -p${{ secrets.REMOTE_DB_PASSWORD }} ${{ secrets.REMOTE_DB_NAME }} > remote.sql
+        mysql -h ${{ secrets.DB_HOST }} -u ${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }} ${{ secrets.DB_NAME }} < remote.sql
+
+    - name: Sync with remote Redis
+      run: |
+        redis-cli -h ${{ secrets.REMOTE_REDIS_HOST }} -p ${{ secrets.REMOTE_REDIS_PORT }} -a ${{ secrets.REMOTE_REDIS_PASSWORD }} --rdb dump.rdb
+        redis-cli -h ${{ secrets.REDIS_HOST }} -p ${{ secrets.REDIS_PORT }} -a ${{ secrets.REDIS_PASSWORD }} FLUSHALL
+        redis-cli -h ${{ secrets.REDIS_HOST }} -p ${{ secrets.REDIS_PORT }} -a ${{ secrets.REDIS_PASSWORD }} --rdb dump.rdb
+
+    - name: Sync with remote files
+      run: |
+        aws s3 sync s3://${{ secrets.REMOTE_AWS_BUCKET }}/files/ s3://${{ secrets.AWS_BUCKET }}/files/
+
+    - name: Sync with remote logs
+      run: |
+        aws s3 sync s3://${{ secrets.REMOTE_AWS_BUCKET }}/logs/ s3://${{ secrets.AWS_BUCKET }}/logs/
+
+    - name: Sync with remote backups
+      run: |
+        aws s3 sync s3://${{ secrets.REMOTE_AWS_BUCKET }}/backups/ s3://${{ secrets.AWS_BUCKET }}/backups/ 

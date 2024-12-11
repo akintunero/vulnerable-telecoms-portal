@@ -1,0 +1,97 @@
+name: Notify
+
+on:
+  workflow_run:
+    workflows: ["Deploy", "Rollback"]
+    types:
+      - completed
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Send Slack notification
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ github.event.workflow_run.conclusion }}
+        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+        text: ${{ github.event.workflow_run.head_commit.message }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Send Discord notification
+      uses: Ilshidur/action-discord@master
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      with:
+        args: ${{ github.event.workflow_run.head_commit.message }}
+
+    - name: Send Microsoft Teams notification
+      uses: opspresso/action-teams@master
+      with:
+        webhook: ${{ secrets.TEAMS_WEBHOOK }}
+        message: ${{ github.event.workflow_run.head_commit.message }}
+
+    - name: Send Email notification
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: ${{ github.event.workflow_run.head_commit.message }}
+        body: ${{ github.event.workflow_run.head_commit.message }}
+        to: ${{ secrets.EMAIL_TO }}
+        from: ${{ secrets.EMAIL_FROM }}
+
+    - name: Send SMS notification
+      uses: rtCamp/action-twilio-sms@v1
+      with:
+        twilio-account-sid: ${{ secrets.TWILIO_ACCOUNT_SID }}
+        twilio-auth-token: ${{ secrets.TWILIO_AUTH_TOKEN }}
+        twilio-from-number: ${{ secrets.TWILIO_FROM_NUMBER }}
+        twilio-to-number: ${{ secrets.TWILIO_TO_NUMBER }}
+        twilio-message: ${{ github.event.workflow_run.head_commit.message }}
+
+    - name: Send PagerDuty notification
+      uses: PagerDuty/incident-action@v1
+      with:
+        token: ${{ secrets.PAGERDUTY_TOKEN }}
+        service_id: ${{ secrets.PAGERDUTY_SERVICE_ID }}
+        title: ${{ github.event.workflow_run.head_commit.message }}
+        body: ${{ github.event.workflow_run.head_commit.message }}
+
+    - name: Send OpsGenie notification
+      uses: opsgenie/opsgenie-github-action@master
+      with:
+        api-key: ${{ secrets.OPSGENIE_API_KEY }}
+        message: ${{ github.event.workflow_run.head_commit.message }}
+        description: ${{ github.event.workflow_run.head_commit.message }}
+
+    - name: Send VictorOps notification
+      uses: victorops/victorops-github-action@master
+      with:
+        api-key: ${{ secrets.VICTOROPS_API_KEY }}
+        routing-key: ${{ secrets.VICTOROPS_ROUTING_KEY }}
+        message: ${{ github.event.workflow_run.head_commit.message }}
+
+    - name: Send ServiceNow notification
+      uses: service-now/action-servicenow@v1
+      with:
+        instance: ${{ secrets.SERVICENOW_INSTANCE }}
+        username: ${{ secrets.SERVICENOW_USERNAME }}
+        password: ${{ secrets.SERVICENOW_PASSWORD }}
+        short_description: ${{ github.event.workflow_run.head_commit.message }}
+        description: ${{ github.event.workflow_run.head_commit.message }}
+
+    - name: Send Jira notification
+      uses: atlassian/gajira-create@master
+      with:
+        project: ${{ secrets.JIRA_PROJECT }}
+        issuetype: Task
+        summary: ${{ github.event.workflow_run.head_commit.message }}
+        description: ${{ github.event.workflow_run.head_commit.message }}
+      env:
+        JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+        JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }} 

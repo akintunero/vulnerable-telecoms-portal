@@ -1,0 +1,8 @@
+DEFAULT Auth-Type := Accept
+        Reply-Message := "Hello, %{User-Name}"
+
+DEFAULT Auth-Type := Reject
+        Reply-Message := "Authentication failed"
+
+testuser Cleartext-Password := "testpass"
+        Reply-Message := "Welcome testuser!" 

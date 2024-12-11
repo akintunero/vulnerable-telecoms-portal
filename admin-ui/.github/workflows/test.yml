@@ -1,0 +1,169 @@
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run unit tests
+      run: npm test
+
+    - name: Run integration tests
+      run: npm run test:integration
+
+    - name: Run end-to-end tests
+      run: npm run test:e2e
+
+    - name: Run performance tests
+      run: npm run test:performance
+
+    - name: Run load tests
+      run: npm run test:load
+
+    - name: Run stress tests
+      run: npm run test:stress
+
+    - name: Run chaos tests
+      run: npm run test:chaos
+
+    - name: Run mutation tests
+      run: npm run test:mutation
+
+    - name: Run coverage tests
+      run: npm run test:coverage
+
+    - name: Run accessibility tests
+      run: npm run test:a11y
+
+    - name: Run visual regression tests
+      run: npm run test:visual
+
+    - name: Run cross-browser tests
+      run: npm run test:browser
+
+    - name: Run mobile tests
+      run: npm run test:mobile
+
+    - name: Run API tests
+      run: npm run test:api
+
+    - name: Run security tests
+      run: npm run test:security
+
+    - name: Run penetration tests
+      run: npm run test:penetration
+
+    - name: Run vulnerability tests
+      run: npm run test:vulnerability
+
+    - name: Run compliance tests
+      run: npm run test:compliance
+
+    - name: Run regression tests
+      run: npm run test:regression
+
+    - name: Run smoke tests
+      run: npm run test:smoke
+
+    - name: Run sanity tests
+      run: npm run test:sanity
+
+    - name: Run acceptance tests
+      run: npm run test:acceptance
+
+    - name: Run system tests
+      run: npm run test:system
+
+    - name: Run component tests
+      run: npm run test:component
+
+    - name: Run contract tests
+      run: npm run test:contract
+
+    - name: Run snapshot tests
+      run: npm run test:snapshot
+
+    - name: Run property tests
+      run: npm run test:property
+
+    - name: Run fuzz tests
+      run: npm run test:fuzz
+
+    - name: Run boundary tests
+      run: npm run test:boundary
+
+    - name: Run equivalence tests
+      run: npm run test:equivalence
+
+    - name: Run decision tests
+      run: npm run test:decision
+
+    - name: Run state tests
+      run: npm run test:state
+
+    - name: Run use case tests
+      run: npm run test:usecase
+
+    - name: Run workflow tests
+      run: npm run test:workflow
+
+    - name: Run scenario tests
+      run: npm run test:scenario
+
+    - name: Run story tests
+      run: npm run test:story
+
+    - name: Run feature tests
+      run: npm run test:feature
+
+    - name: Run behavior tests
+      run: npm run test:behavior
+
+    - name: Run specification tests
+      run: npm run test:specification
+
+    - name: Run requirement tests
+      run: npm run test:requirement
+
+    - name: Run validation tests
+      run: npm run test:validation
+
+    - name: Run verification tests
+      run: npm run test:verification
+
+    - name: Run qualification tests
+      run: npm run test:qualification
+
+    - name: Run certification tests
+      run: npm run test:certification
+
+    - name: Run accreditation tests
+      run: npm run test:accreditation
+
+    - name: Run approval tests
+      run: npm run test:approval 

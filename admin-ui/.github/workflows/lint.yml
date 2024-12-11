@@ -1,0 +1,47 @@
+name: Lint
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run ESLint
+      run: npm run lint:eslint
+
+    - name: Run Prettier
+      run: npm run lint:prettier
+
+    - name: Run TypeScript
+      run: npm run lint:typescript
+
+    - name: Run StyleLint
+      run: npm run lint:stylelint
+
+    - name: Run MarkdownLint
+      run: npm run lint:markdownlint
+
+    - name: Run HTMLHint
+      run: npm run lint:htmlhint
+
+    - name: Run JSONLint
+      run: npm run lint:jsonlint
+
+    - name: Run YAMLLint
+      run: npm run lint:yamllint
+
+    - name: Run DockerfileLint
+      run: npm run lint:dockerfilelint
+
+    - name: Run ShellCheck
+      run: npm run lint:shellcheck 

@@ -1,0 +1,221 @@
+name: Restore
+
+on:
+  workflow_dispatch:
+    inputs:
+      backup_date:
+        description: 'Backup date to restore from (YYYY-MM-DD)'
+        required: true
+        type: string
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Restore S3 bucket
+      run: |
+        aws s3 sync s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/ s3://${{ secrets.AWS_BUCKET }}/admin-ui/
+
+    - name: Restore DynamoDB table
+      run: |
+        aws dynamodb import-table \
+          --s3-bucket-source ${{ secrets.AWS_BUCKET }} \
+          --s3-key-prefix admin-ui-backup/${{ github.event.inputs.backup_date }}/dynamodb/ \
+          --table-arn arn:aws:dynamodb:us-east-1:123456789012:table/admin-ui-table
+
+    - name: Restore RDS database
+      run: |
+        aws rds restore-db-instance-from-db-snapshot \
+          --db-instance-identifier admin-ui-db \
+          --db-snapshot-identifier admin-ui-snapshot-${{ github.event.inputs.backup_date }}
+
+    - name: Restore EFS filesystem
+      run: |
+        aws efs restore-backup \
+          --file-system-id fs-12345678 \
+          --backup-id admin-ui-backup-${{ github.event.inputs.backup_date }}
+
+    - name: Restore EBS volumes
+      run: |
+        aws ec2 restore-snapshot \
+          --volume-id vol-12345678 \
+          --snapshot-id admin-ui-backup-${{ github.event.inputs.backup_date }}
+
+    - name: Restore ECR images
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/ecr/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/ecr/$filename .
+          gunzip $filename
+          docker load < ${filename%.gz}
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 123456789012.dkr.ecr.us-east-1.amazonaws.com
+          docker tag admin-ui-backup:${filename%.tar.gz} 123456789012.dkr.ecr.us-east-1.amazonaws.com/admin-ui:${filename%.tar.gz}
+          docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/admin-ui:${filename%.tar.gz}
+        done
+
+    - name: Restore Secrets Manager secrets
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/secrets/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/secrets/$filename .
+          aws secretsmanager create-secret --name ${filename%.json} --secret-string file://$filename
+        done
+
+    - name: Restore Systems Manager parameters
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/ssm/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/ssm/$filename .
+          aws ssm put-parameter --name ${filename%.txt} --value file://$filename --type SecureString
+        done
+
+    - name: Restore CloudWatch logs
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/logs/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/logs/$filename .
+          aws logs create-log-group --log-group-name ${filename%.json}
+          aws logs put-log-events --log-group-name ${filename%.json} --log-stream-name ${{ github.event.inputs.backup_date }} --log-events file://$filename
+        done
+
+    - name: Restore CloudTrail logs
+      run: |
+        aws s3 sync s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/cloudtrail/ s3://admin-ui-trail-logs/
+
+    - name: Restore Config rules
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/config/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/config/$filename .
+          aws configservice put-config-rule --config-rule file://$filename
+        done
+
+    - name: Restore GuardDuty findings
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/guardduty/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/guardduty/$filename .
+          aws guardduty create-findings --detector-id 1234567890abcdef01234567890abcdef --findings file://$filename
+        done
+
+    - name: Restore Inspector findings
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/inspector/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/inspector/$filename .
+          aws inspector create-findings --assessment-run-arn arn:aws:inspector:us-east-1:123456789012:target/0-AB6DMKnv/run/0-EXAMPLE --findings file://$filename
+        done
+
+    - name: Restore Macie findings
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/macie/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/macie/$filename .
+          aws macie create-findings --findings file://$filename
+        done
+
+    - name: Restore Shield protections
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/shield/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/shield/$filename .
+          aws shield create-protection --protection file://$filename
+        done
+
+    - name: Restore WAF rules
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/waf/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/waf/$filename .
+          aws waf create-web-acl --name ${filename%.json} --scope REGIONAL --default-action file://$filename
+        done
+
+    - name: Restore KMS keys
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/kms/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/kms/$filename .
+          aws kms create-key --description ${filename%.json} --key-usage ENCRYPT_DECRYPT --origin EXTERNAL --key-spec file://$filename
+        done
+
+    - name: Restore Secrets Manager secrets
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/secrets/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/secrets/$filename .
+          aws secretsmanager create-secret --name ${filename%.json} --secret-string file://$filename
+        done
+
+    - name: Restore Systems Manager documents
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/ssm/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/ssm/$filename .
+          aws ssm create-document --name ${filename%.json} --content file://$filename
+        done
+
+    - name: Restore CloudFormation stacks
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/cloudformation/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/cloudformation/$filename .
+          aws cloudformation create-stack --stack-name ${filename%.json} --template-body file://$filename
+        done
+
+    - name: Restore Elastic Beanstalk applications
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/elasticbeanstalk/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/elasticbeanstalk/$filename .
+          aws elasticbeanstalk create-application --application-name ${filename%.json} --description file://$filename
+        done
+
+    - name: Restore EKS clusters
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/eks/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/eks/$filename .
+          aws eks create-cluster --name ${filename%.json} --role-arn file://$filename
+        done
+
+    - name: Restore ECR repositories
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/ecr/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/ecr/$filename .
+          aws ecr create-repository --repository-name ${filename%.json} --image-tag-mutability file://$filename
+        done
+
+    - name: Restore ECS clusters
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/ecs/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/ecs/$filename .
+          aws ecs create-cluster --cluster-name ${filename%.json} --capacity-providers file://$filename
+        done
+
+    - name: Restore ECR Public repositories
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/ecr-public/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/ecr-public/$filename .
+          aws ecr-public create-repository --repository-name ${filename%.json} --image-tag-mutability file://$filename
+        done
+
+    - name: Restore ECR Public Gallery repositories
+      run: |
+        aws s3 ls s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/ecr-public-gallery/ | while read -r line; do
+          filename=$(echo "$line" | awk '{print $4}')
+          aws s3 cp s3://${{ secrets.AWS_BUCKET }}/admin-ui-backup/${{ github.event.inputs.backup_date }}/ecr-public-gallery/$filename .
+          aws ecr-public create-repository --repository-name ${filename%.json} --image-tag-mutability file://$filename
+        done 
