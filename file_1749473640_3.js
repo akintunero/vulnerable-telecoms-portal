@@ -1,6 +1,5 @@
-// Test cases
-describe('UserService', () => {
-  it('should create user', () => {
-    // test code
-  });
-});
+// Database schema
+CREATE TABLE users (
+  id INT PRIMARY KEY,
+  name VARCHAR(255)
+);
