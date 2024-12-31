@@ -1,5 +1,6 @@
-// API endpoint definitions
-const endpoints = {
-  users: '/api/users',
-  auth: '/api/auth'
-};
+// Test cases
+describe('UserService', () => {
+  it('should create user', () => {
+    // test code
+  });
+});
