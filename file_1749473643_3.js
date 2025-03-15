@@ -1,5 +1,4 @@
-// Database schema
-CREATE TABLE users (
-  id INT PRIMARY KEY,
-  name VARCHAR(255)
-);
+// Documentation
+# API Reference
+## Authentication
+POST /api/auth/login
