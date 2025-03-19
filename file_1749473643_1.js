@@ -1,4 +1,5 @@
-// Documentation
-# API Reference
-## Authentication
-POST /api/auth/login
+// Configuration settings
+const config = {
+  apiKey: 'test_key',
+  debug: true
+};
