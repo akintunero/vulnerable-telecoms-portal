@@ -1,6 +1,5 @@
-// Test cases
-describe('UserService', () => {
-  it('should create user', () => {
-    // test code
-  });
-});
+// Configuration settings
+const config = {
+  apiKey: 'test_key',
+  debug: true
+};
