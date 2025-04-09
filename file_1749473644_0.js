@@ -1,5 +1,5 @@
-// Configuration settings
-const config = {
-  apiKey: 'test_key',
-  debug: true
-};
+// Database schema
+CREATE TABLE users (
+  id INT PRIMARY KEY,
+  name VARCHAR(255)
+);
