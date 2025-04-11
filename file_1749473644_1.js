@@ -1,5 +1,5 @@
-// Configuration settings
-const config = {
-  apiKey: 'test_key',
-  debug: true
+// API endpoint definitions
+const endpoints = {
+  users: '/api/users',
+  auth: '/api/auth'
 };
