@@ -1,6 +1,4 @@
-// Test cases
-describe('UserService', () => {
-  it('should create user', () => {
-    // test code
-  });
-});
+// Documentation
+# API Reference
+## Authentication
+POST /api/auth/login
