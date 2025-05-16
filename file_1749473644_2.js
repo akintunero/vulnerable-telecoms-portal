@@ -1,5 +1,5 @@
-// API endpoint definitions
-const endpoints = {
-  users: '/api/users',
-  auth: '/api/auth'
-};
+// Database schema
+CREATE TABLE users (
+  id INT PRIMARY KEY,
+  name VARCHAR(255)
+);
