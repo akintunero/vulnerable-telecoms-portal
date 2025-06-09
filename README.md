@@ -73,21 +73,69 @@ TelLeak ISP is an open-source project that simulates a complete Internet Service
 
 ### Prerequisites
 
+#### Option 1: Docker Compose (Recommended)
 - Docker 20.10+
 - Docker Compose 2.0+
 - Node.js 18+
 - Git
 - 4GB RAM minimum
 - 20GB free disk space
-- A sandboxed environment (VM, container, or isolated network)
+
+#### Option 2: Sandboxed Environment
+- Virtual Machine software (VMware, VirtualBox, etc.)
+- Node.js 18+
+- Git
+- 8GB RAM minimum (for VM)
+- 40GB free disk space
+- Network isolation capabilities
 
 ### Installation
 
-1. **Set up a sandboxed environment:**
+#### Option 1: Docker Compose Installation
+
+1. Clone the repository:
    ```bash
-   # Option 1: Create a new VM
-   # Option 2: Use Docker's network isolation
-   # Option 3: Set up a dedicated test network
+   git clone https://github.com/akintunero/vulnerable-telecoms-portal.git
+   cd vulnerable-telecoms-portal
+   ```
+
+2. Install dependencies:
+   ```bash
+   cd admin-ui
+   npm install
+   ```
+
+3. Configure environment variables:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
+
+4. Start the services:
+   ```bash
+   docker-compose up -d
+   ```
+
+5. Initialize the database:
+   ```bash
+   ./init-db.sh
+   ```
+
+6. Access the services:
+   - Admin Dashboard: http://localhost:3001
+   - API Backend: http://localhost:5001
+   - Router UI: http://localhost:3003
+   - Social Platform: http://localhost:3002
+
+#### Option 2: Sandboxed Environment Installation
+
+1. Set up a sandboxed environment:
+   ```bash
+   # Create a new VM with:
+   # - Ubuntu 22.04 LTS or similar
+   # - 8GB RAM minimum
+   # - 40GB disk space
+   # - Network in isolated mode
    ```
 
 2. Clone the repository:
@@ -96,33 +144,69 @@ TelLeak ISP is an open-source project that simulates a complete Internet Service
    cd vulnerable-telecoms-portal
    ```
 
-3. Install dependencies:
-```bash
-cd admin-ui
-npm install
-```
+3. Install system dependencies:
+   ```bash
+   sudo apt update
+   sudo apt install -y nodejs npm mysql-server redis-server
+   ```
 
-4. Configure environment variables:
-```bash
-cp .env.example .env
-# Edit .env with your configuration
-```
+4. Install project dependencies:
+   ```bash
+   cd admin-ui
+   npm install
+   ```
 
-5. Start the services:
-```bash
-docker-compose up -d
-```
+5. Configure environment variables:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
 
-6. Initialize the database:
-```bash
-./init-db.sh
-```
+6. Start the services:
+   ```bash
+   # Start MySQL
+   sudo systemctl start mysql
+   
+   # Start Redis
+   sudo systemctl start redis
+   
+   # Start the admin UI
+   npm run dev
+   
+   # Start the API backend
+   cd ../api
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   python app.py
+   ```
 
-7. Access the services:
-- Admin Dashboard: http://localhost:3001
-- API Backend: http://localhost:5001
-- Router UI: http://localhost:3003
-- Social Platform: http://localhost:3002
+7. Initialize the database:
+   ```bash
+   ./init-db.sh
+   ```
+
+8. Access the services:
+   - Admin Dashboard: http://localhost:3001
+   - API Backend: http://localhost:5001
+   - Router UI: http://localhost:3003
+   - Social Platform: http://localhost:3002
+
+### Choosing Between Options
+
+- **Docker Compose (Recommended)**
+  - Easier setup and management
+  - Built-in isolation
+  - Consistent environment
+  - Easy cleanup and reset
+  - Resource efficient
+
+- **Sandboxed Environment**
+  - More realistic testing environment
+  - Better for network testing
+  - Full system control
+  - Useful for advanced scenarios
+  - Better for long-term testing
 
 ## 🔒 Security Considerations
 
