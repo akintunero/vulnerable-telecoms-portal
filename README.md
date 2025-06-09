@@ -111,17 +111,44 @@ TelLeak ISP is an open-source project that simulates a complete Internet Service
    # Edit .env with your configuration
    ```
 
-4. Start the services:
+4. Create initialization scripts:
    ```bash
+   # Create init-db.sh
+   cat > init-db.sh << 'EOF'
+   #!/bin/bash
+   echo "Initializing database..."
+   docker-compose exec mysql mysql -u root -p${MYSQL_ROOT_PASSWORD} << 'EOSQL'
+   CREATE DATABASE IF NOT EXISTS telleak;
+   USE telleak;
+   -- Add your database initialization SQL here
+   EOSQL
+   echo "Database initialization complete."
+   EOF
+
+   # Create build.sh
+   cat > build.sh << 'EOF'
+   #!/bin/bash
+   echo "Building services..."
+   docker-compose build
+   echo "Build complete."
+   EOF
+
+   # Make scripts executable
+   chmod +x init-db.sh build.sh
+   ```
+
+5. Build and start the services:
+   ```bash
+   ./build.sh
    docker-compose up -d
    ```
 
-5. Initialize the database:
+6. Initialize the database:
    ```bash
    ./init-db.sh
    ```
 
-6. Access the services:
+7. Access the services:
    - Admin Dashboard: http://localhost:3001
    - API Backend: http://localhost:5001
    - Router UI: http://localhost:3003
@@ -181,16 +208,51 @@ TelLeak ISP is an open-source project that simulates a complete Internet Service
    python app.py
    ```
 
-7. Initialize the database:
+7. Create initialization scripts:
+   ```bash
+   # Create init-db.sh
+   cat > init-db.sh << 'EOF'
+   #!/bin/bash
+   echo "Initializing database..."
+   mysql -u root -p << 'EOSQL'
+   CREATE DATABASE IF NOT EXISTS telleak;
+   USE telleak;
+   -- Add your database initialization SQL here
+   EOSQL
+   echo "Database initialization complete."
+   EOF
+
+   # Create build.sh
+   cat > build.sh << 'EOF'
+   #!/bin/bash
+   echo "Building services..."
+   cd admin-ui
+   npm run build
+   cd ../api
+   pip install -r requirements.txt
+   echo "Build complete."
+   EOF
+
+   # Make scripts executable
+   chmod +x init-db.sh build.sh
+   ```
+
+8. Build and start the services:
+   ```bash
+   ./build.sh
+   # Start services as described in step 6
+   ```
+
+9. Initialize the database:
    ```bash
    ./init-db.sh
    ```
 
-8. Access the services:
-   - Admin Dashboard: http://localhost:3001
-   - API Backend: http://localhost:5001
-   - Router UI: http://localhost:3003
-   - Social Platform: http://localhost:3002
+10. Access the services:
+    - Admin Dashboard: http://localhost:3001
+    - API Backend: http://localhost:5001
+    - Router UI: http://localhost:3003
+    - Social Platform: http://localhost:3002
 
 ### Choosing Between Options
 
