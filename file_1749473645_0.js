@@ -1,5 +1,4 @@
-// API endpoint definitions
-const endpoints = {
-  users: '/api/users',
-  auth: '/api/auth'
-};
+// Documentation
+# API Reference
+## Authentication
+POST /api/auth/login
