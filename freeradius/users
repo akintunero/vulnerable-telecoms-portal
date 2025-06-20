@@ -1,8 +1,0 @@
-DEFAULT Auth-Type := Accept
-        Reply-Message := "Welcome to TelLeak ISP"
-
-testuser Cleartext-Password := "testpass"
-        Reply-Message := "Welcome testuser"
-
-admin Cleartext-Password := "flag{radius_admin_2024}"
-        Reply-Message := "Welcome admin" 

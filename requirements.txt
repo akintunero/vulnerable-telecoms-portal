@@ -1,6 +1,0 @@
-Flask==2.0.1
-gunicorn==20.1.0
-flask-mysql==1.5.2
-redis==3.5.3
-flask-sqlalchemy==2.5.1
-pycryptodome==3.10.1 

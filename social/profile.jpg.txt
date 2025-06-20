@@ -1,5 +1,0 @@
-This would be a JPEG image with EXIF data containing:
-Creator: flag{exif_avatar_1111}
-
-Use exiftool to create actual image:
-exiftool -Creator='flag{exif_avatar_1111}' profile.jpg 

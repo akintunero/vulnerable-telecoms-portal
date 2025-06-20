@@ -1,7 +1,0 @@
-# This file should not be accessible via web
-# But it's readable via FTP!
-
-# Sensitive Information
-db_password=flag{ftp_backup_exposure_2024}
-admin_email=admin@telleakisp.local
-backup_schedule=daily 
