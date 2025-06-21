@@ -27,7 +27,6 @@ import {
   CheckCircleIcon
 } from '@heroicons/react/24/outline';
 
-// Mock data for charts
 const networkPerformanceData = [
   { time: '00:00', bandwidth: 85, latency: 12, uptime: 99.9 },
   { time: '04:00', bandwidth: 78, latency: 15, uptime: 99.8 },
@@ -278,13 +277,4 @@ const DashboardPage: React.FC = () => {
   );
 };
 
-export default DashboardPage; // Project initialization - Sat Jun 21 02:05:29 WAT 2025
-// January development 2 - Sat Jun 21 02:05:31 WAT 2025
-// January development 7 - Sat Jun 21 02:05:32 WAT 2025
-// January development 12 - Sat Jun 21 02:05:33 WAT 2025
-// January development 17 - Sat Jun 21 02:05:35 WAT 2025
-// January development 22 - Sat Jun 21 02:05:36 WAT 2025
-// January development 27 - Sat Jun 21 02:05:36 WAT 2025
-// January development 32 - Sat Jun 21 02:05:37 WAT 2025
-// January development 37 - Sat Jun 21 02:05:38 WAT 2025
-// January development 42 - Sat Jun 21 02:05:38 WAT 2025
+export default DashboardPage;

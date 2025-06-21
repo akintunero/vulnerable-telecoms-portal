@@ -61,8 +61,4 @@ The embedded vulnerabilities in this project are:
 
 ## Acknowledgments
 
-We appreciate security researchers who help improve the educational value of this project through responsible disclosure of legitimate issues. // March development 7 - Sat Jun 21 02:05:49 WAT 2025
-// March development 12 - Sat Jun 21 02:05:49 WAT 2025
-// March development 17 - Sat Jun 21 02:05:50 WAT 2025
-// March development 22 - Sat Jun 21 02:05:51 WAT 2025
-// March development 27 - Sat Jun 21 02:05:51 WAT 2025
+We appreciate security researchers who help improve the educational value of this project through responsible disclosure of legitimate issues.

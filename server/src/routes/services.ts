@@ -1,18 +1,24 @@
 import express from 'express';
 import pool from '../config/database';
-import { auth } from '../middleware/auth';
+import { auth, adminOnly } from '../middleware/auth';
 
 const router = express.Router();
 
 // Vulnerable endpoint: provision a service for any customer (no authorization check)
-router.post('/provision', auth, async (req, res) => {
-  const { customerId, serviceName } = req.body;
-  // No check if the user is allowed to provision for this customer
-  await pool.execute(
-    'INSERT INTO service_provisioning (customer_id, service_name, provisioned_at) VALUES (?, ?, NOW())',
-    [customerId, serviceName]
-  );
-  res.json({ success: true, message: 'Service provisioned.' });
+router.post('/provision', async (req, res) => {
+  try {
+    const { customer_id, service_type, configuration } = req.body;
+    
+    const [result] = await pool.execute(
+      'INSERT INTO services (customer_id, service_type, configuration, status) VALUES (?, ?, ?, ?)',
+      [customer_id, service_type, JSON.stringify(configuration), 'active']
+    );
+    
+    res.status(201).json({ message: 'Service provisioned successfully', service_id: result.insertId });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    res.status(500).json({ error: message });
+  }
 });
 
 export default router; // February development 8 - Sat Jun 21 02:05:42 WAT 2025

@@ -195,7 +195,4 @@ router.get('/search', auth, async (req, res) => {
   }
 });
 
-export default router; // February development 9 - Sat Jun 21 02:05:42 WAT 2025
-// February development 14 - Sat Jun 21 02:05:43 WAT 2025
-// February development 19 - Sat Jun 21 02:05:45 WAT 2025
-// February development 24 - Sat Jun 21 02:05:46 WAT 2025
+export default router;

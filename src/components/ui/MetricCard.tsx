@@ -57,12 +57,4 @@ const MetricCard: React.FC<MetricCardProps> = ({
   );
 };
 
-export default MetricCard;// January development 1 - Sat Jun 21 02:05:31 WAT 2025
-// January development 6 - Sat Jun 21 02:05:32 WAT 2025
-// January development 11 - Sat Jun 21 02:05:33 WAT 2025
-// January development 16 - Sat Jun 21 02:05:35 WAT 2025
-// January development 21 - Sat Jun 21 02:05:35 WAT 2025
-// January development 26 - Sat Jun 21 02:05:36 WAT 2025
-// January development 31 - Sat Jun 21 02:05:37 WAT 2025
-// January development 36 - Sat Jun 21 02:05:38 WAT 2025
-// January development 41 - Sat Jun 21 02:05:38 WAT 2025
+export default MetricCard;

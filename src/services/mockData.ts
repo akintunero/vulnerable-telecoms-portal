@@ -1,4 +1,3 @@
-// Types
 export interface User {
   id: string;
   name: string;
@@ -118,7 +117,6 @@ export interface ServiceTicket {
   description: string;
 }
 
-// Mock Data
 export const mockUsers: User[] = [
   {
     id: '1',
@@ -479,7 +477,6 @@ export const mockServiceTickets: ServiceTicket[] = [
   }
 ];
 
-// Mock API Functions
 export const mockApi = {
   // Users
   getUsers: () => Promise.resolve(mockUsers),

@@ -2,6 +2,9 @@
 
 > **IMPORTANT:** This project is intentionally vulnerable and is **strictly to be run in Docker**. Do not deploy or run outside a containerized environment. See CTF section for details.
 
+![Portal Dashboard](<src/pages/Screenshot 2025-06-21 at 03.15.01.png>)
+
+
 ## Getting Started (Docker Only)
 
 This project is intentionally vulnerable and will **only work in Docker** due to the nature of the included vulnerabilities.
@@ -102,8 +105,4 @@ Good luck, and happy hacking!
 
 ## License
 
-This project is licensed under the MIT License.// Initial documentation - Sat Jun 21 02:05:30 WAT 2025
-// March development 9 - Sat Jun 21 02:05:49 WAT 2025
-// March development 14 - Sat Jun 21 02:05:50 WAT 2025
-// March development 19 - Sat Jun 21 02:05:50 WAT 2025
-// March development 24 - Sat Jun 21 02:05:51 WAT 2025
+This project is licensed under the MIT License.

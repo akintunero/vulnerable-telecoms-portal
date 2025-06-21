@@ -2,7 +2,6 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
@@ -38,4 +37,3 @@ export default defineConfig({
     }
   }
 });
-// Build configuration - Sat Jun 21 02:05:20 WAT 2025

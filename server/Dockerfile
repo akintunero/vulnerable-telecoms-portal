@@ -1,8 +1,9 @@
 FROM node:18-alpine
 WORKDIR /app
 COPY package*.json ./
-RUN npm install --production
+RUN npm install
 COPY . .
 RUN npm run build
+RUN npm prune --production
 EXPOSE 3000
-CMD ["node", "dist/index.js"] // API issues - Sat Jun 21 02:05:40 WAT 2025
+CMD ["node", "dist/index.js"]

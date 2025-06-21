@@ -178,8 +178,7 @@ const mockLinks: NetworkLink[] = [
   }
 ];
 
-// Mock data for network performance
-const performanceData = [
+const networkPerformanceData = [
   { time: '00:00', bandwidth: 65, latency: 4, packets: 1200 },
   { time: '04:00', bandwidth: 70, latency: 5, packets: 1500 },
   { time: '08:00', bandwidth: 85, latency: 6, packets: 1800 },
@@ -188,15 +187,13 @@ const performanceData = [
   { time: '20:00', bandwidth: 60, latency: 4, packets: 1300 }
 ];
 
-// Mock data for device types
-const deviceTypeData = [
+const deviceTypes = [
   { name: 'Routers', value: 8 },
   { name: 'Switches', value: 12 },
   { name: 'Firewalls', value: 4 }
 ];
 
-// Mock data for link types
-const linkTypeData = [
+const linkTypes = [
   { name: 'Backbone', value: 5 },
   { name: 'Distribution', value: 8 },
   { name: 'Access', value: 15 }
@@ -318,7 +315,7 @@ const NetworkMapPage: React.FC = () => {
           <h3 className="text-lg font-medium text-gray-900 mb-4">Network Performance</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={performanceData}>
+              <AreaChart data={networkPerformanceData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="time" />
                 <YAxis yAxisId="left" />
@@ -338,7 +335,7 @@ const NetworkMapPage: React.FC = () => {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={deviceTypeData}
+                  data={deviceTypes}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
@@ -347,7 +344,7 @@ const NetworkMapPage: React.FC = () => {
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {deviceTypeData.map((entry, index) => (
+                  {deviceTypes.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -363,7 +360,7 @@ const NetworkMapPage: React.FC = () => {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={linkTypeData}
+                  data={linkTypes}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
@@ -372,7 +369,7 @@ const NetworkMapPage: React.FC = () => {
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {linkTypeData.map((entry, index) => (
+                  {linkTypes.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>

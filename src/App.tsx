@@ -1,170 +1,152 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import DashboardLayout from './components/layout/DashboardLayout';
-import LoginPage from './pages/auth/LoginPage';
-import DashboardPage from './pages/dashboard/DashboardPage';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
-// Network Management Pages
-import FibreMapPage from './pages/network/fibre/FibreMapPage';
-import OpticalPowerPage from './pages/network/OpticalPowerPage';
+import DashboardPage from './pages/dashboard/DashboardPage';
+import NetworkManagementPage from './pages/network-management/NetworkManagementPage';
 import NetworkTopologyPage from './pages/network/NetworkTopologyPage';
 import DeviceMonitoringPage from './pages/network/DeviceMonitoringPage';
-import BandwidthUtilizationPage from './pages/network/BandwidthUtilizationPage';
 import IncidentLogsPage from './pages/network/IncidentLogsPage';
+import BandwidthUtilizationPage from './pages/network/BandwidthUtilizationPage';
+import OpticalPowerPage from './pages/network/OpticalPowerPage';
+import ServiceQualityPage from './pages/service-quality/ServiceQualityPage';
 
-// Customer Management Pages
-import SimSwapsPage from './pages/customers/SimSwapsPage';
+import CustomerManagementPage from './pages/customer-management/CustomerManagementPage';
+import CustomersPage from './pages/customers/CustomersPage';
 import EnterpriseAccountsPage from './pages/customers/EnterpriseAccountsPage';
 import SubscriberManagementPage from './pages/customers/SubscriberManagementPage';
 import ProvisioningPage from './pages/customers/ProvisioningPage';
+import SimSwapsPage from './pages/customers/SimSwapsPage';
 
-// Services Pages
 import MPLSManagementPage from './pages/services/MPLSManagementPage';
-import IPAccessPage from './pages/services/IPAccessPage';
 import VPNManagementPage from './pages/services/VPNManagementPage';
+import IPAccessPage from './pages/services/IPAccessPage';
 import SecuritySolutionsPage from './pages/services/SecuritySolutionsPage';
 
-// Support Pages
 import TicketingSystemPage from './pages/support/TicketingSystemPage';
 import SLAMonitoringPage from './pages/support/SLAMonitoringPage';
 import CustomerFeedbackPage from './pages/support/CustomerFeedbackPage';
 
-// Security Pages
+import SecurityPage from './pages/security/SecurityPage';
 import SecurityAlertsPage from './pages/security/SecurityAlertsPage';
 import FirewallMonitoringPage from './pages/security/FirewallMonitoringPage';
 import ComplianceReportsPage from './pages/security/ComplianceReportsPage';
 
-// Reporting Pages
-import UsageReportsPage from './pages/reports/UsageReportsPage';
-import FinancialKPIsPage from './pages/reports/FinancialKPIsPage';
+import ReportingPage from './pages/reports/ReportingPage';
 import CustomReportBuilderPage from './pages/reports/CustomReportBuilderPage';
+import FinancialKPIsPage from './pages/reports/FinancialKPIsPage';
+import UsageReportsPage from './pages/reports/UsageReportsPage';
 
-// Inventory Pages
+import InventoryPage from './pages/inventory/InventoryPage';
+import AssetTrackingPage from './pages/inventory/AssetTrackingPage';
 import DeviceInventoryPage from './pages/inventory/DeviceInventoryPage';
 import SimManagementPage from './pages/inventory/SimManagementPage';
-import AssetTrackingPage from './pages/inventory/AssetTrackingPage';
 
-// Maintenance Pages
-import ScheduledMaintenancePage from './pages/maintenance/ScheduledMaintenancePage';
 import ChangeManagementPage from './pages/maintenance/ChangeManagementPage';
+import ScheduledMaintenancePage from './pages/maintenance/ScheduledMaintenancePage';
 
-// User Management Pages
 import UserManagementPage from './pages/users/UserManagementPage';
 import RoleSettingsPage from './pages/users/RoleSettingsPage';
 import AuditLogsPage from './pages/users/AuditLogsPage';
 
-// Settings Pages
 import SystemSettingsPage from './pages/settings/SystemSettingsPage';
 import NotificationPreferencesPage from './pages/settings/NotificationPreferencesPage';
 import APIIntegrationsPage from './pages/settings/APIIntegrationsPage';
 
-// Protected Route Component
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  return <>{children}</>;
-};
-
-// Main App Component
-const AppContent: React.FC = () => {
-  const { isAuthenticated } = useAuth();
-
-  if (!isAuthenticated) {
-    return (
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    );
-  }
-
-  return (
-    <Routes>
-      <Route path="/" element={<DashboardLayout />}>
-        <Route index element={<Navigate to="/dashboard" replace />} />
-        <Route path="dashboard" element={<DashboardPage />} />
-        
-        {/* Network Management Routes */}
-        <Route path="network/fibre-map" element={<FibreMapPage />} />
-        <Route path="network/optical-power" element={<OpticalPowerPage />} />
-        <Route path="network/topology" element={<NetworkTopologyPage />} />
-        <Route path="network/device-monitoring" element={<DeviceMonitoringPage />} />
-        <Route path="network/bandwidth" element={<BandwidthUtilizationPage />} />
-        <Route path="network/incidents" element={<IncidentLogsPage />} />
-        
-        {/* Customer Management Routes */}
-        <Route path="customers/sim-swaps" element={<SimSwapsPage />} />
-        <Route path="customers/enterprise" element={<EnterpriseAccountsPage />} />
-        <Route path="customers/subscribers" element={<SubscriberManagementPage />} />
-        <Route path="customers/provisioning" element={<ProvisioningPage />} />
-        
-        {/* Services Routes */}
-        <Route path="services/mpls" element={<MPLSManagementPage />} />
-        <Route path="services/ip-access" element={<IPAccessPage />} />
-        <Route path="services/vpn" element={<VPNManagementPage />} />
-        <Route path="services/security" element={<SecuritySolutionsPage />} />
-        
-        {/* Support Routes */}
-        <Route path="support/tickets" element={<TicketingSystemPage />} />
-        <Route path="support/sla" element={<SLAMonitoringPage />} />
-        <Route path="support/feedback" element={<CustomerFeedbackPage />} />
-        
-        {/* Security Routes */}
-        <Route path="security/alerts" element={<SecurityAlertsPage />} />
-        <Route path="security/firewall" element={<FirewallMonitoringPage />} />
-        <Route path="security/compliance" element={<ComplianceReportsPage />} />
-        
-        {/* Reporting Routes */}
-        <Route path="reports/usage" element={<UsageReportsPage />} />
-        <Route path="reports/financial" element={<FinancialKPIsPage />} />
-        <Route path="reports/custom" element={<CustomReportBuilderPage />} />
-        
-        {/* Inventory Routes */}
-        <Route path="inventory/devices" element={<DeviceInventoryPage />} />
-        <Route path="inventory/sims" element={<SimManagementPage />} />
-        <Route path="inventory/assets" element={<AssetTrackingPage />} />
-        
-        {/* Maintenance Routes */}
-        <Route path="maintenance/scheduled" element={<ScheduledMaintenancePage />} />
-        <Route path="maintenance/changes" element={<ChangeManagementPage />} />
-        
-        {/* User Management Routes */}
-        <Route path="users/management" element={<UserManagementPage />} />
-        <Route path="users/roles" element={<RoleSettingsPage />} />
-        <Route path="users/audit" element={<AuditLogsPage />} />
-        
-        {/* Settings Routes */}
-        <Route path="settings/system" element={<SystemSettingsPage />} />
-        <Route path="settings/notifications" element={<NotificationPreferencesPage />} />
-        <Route path="settings/api" element={<APIIntegrationsPage />} />
-      </Route>
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
-    </Routes>
-  );
-};
+import LoginPage from './pages/auth/LoginPage';
+import Layout from './components/layout/Layout';
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          
+          <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+            <Route index element={<DashboardPage />} />
+            
+            <Route path="dashboard" element={<DashboardPage />} />
+            
+            <Route path="network">
+              <Route path="management" element={<NetworkManagementPage />} />
+              <Route path="topology" element={<NetworkTopologyPage />} />
+              <Route path="monitoring" element={<DeviceMonitoringPage />} />
+              <Route path="incidents" element={<IncidentLogsPage />} />
+              <Route path="bandwidth" element={<BandwidthUtilizationPage />} />
+              <Route path="optical-power" element={<OpticalPowerPage />} />
+              <Route path="bgp" element={<BGPStatusPage />} />
+              <Route path="mpls" element={<MPLSDetailsPage />} />
+              <Route path="map" element={<NetworkMapPage />} />
+              <Route path="fiber" element={<FibreMapPage />} />
+              <Route path="threat" element={<ThreatMapPage />} />
+            </Route>
+            
+            <Route path="customers">
+              <Route path="management" element={<CustomerManagementPage />} />
+              <Route path="list" element={<CustomersPage />} />
+              <Route path="enterprise" element={<EnterpriseAccountsPage />} />
+              <Route path="subscribers" element={<SubscriberManagementPage />} />
+              <Route path="provisioning" element={<ProvisioningPage />} />
+              <Route path="sim-swaps" element={<SimSwapsPage />} />
+            </Route>
+            
+            <Route path="services">
+              <Route path="mpls" element={<MPLSManagementPage />} />
+              <Route path="vpn" element={<VPNManagementPage />} />
+              <Route path="ip-access" element={<IPAccessPage />} />
+              <Route path="security" element={<SecuritySolutionsPage />} />
+            </Route>
+            
+            <Route path="support">
+              <Route path="tickets" element={<TicketingSystemPage />} />
+              <Route path="sla" element={<SLAMonitoringPage />} />
+              <Route path="feedback" element={<CustomerFeedbackPage />} />
+            </Route>
+            
+            <Route path="security">
+              <Route index element={<SecurityPage />} />
+              <Route path="alerts" element={<SecurityAlertsPage />} />
+              <Route path="firewall" element={<FirewallMonitoringPage />} />
+              <Route path="compliance" element={<ComplianceReportsPage />} />
+            </Route>
+            
+            <Route path="reports">
+              <Route index element={<ReportingPage />} />
+              <Route path="custom" element={<CustomReportBuilderPage />} />
+              <Route path="financial" element={<FinancialKPIsPage />} />
+              <Route path="usage" element={<UsageReportsPage />} />
+            </Route>
+            
+            <Route path="inventory">
+              <Route index element={<InventoryPage />} />
+              <Route path="assets" element={<AssetTrackingPage />} />
+              <Route path="devices" element={<DeviceInventoryPage />} />
+              <Route path="sims" element={<SimManagementPage />} />
+            </Route>
+            
+            <Route path="maintenance">
+              <Route path="changes" element={<ChangeManagementPage />} />
+              <Route path="scheduled" element={<ScheduledMaintenancePage />} />
+            </Route>
+            
+            <Route path="users">
+              <Route path="management" element={<UserManagementPage />} />
+              <Route path="roles" element={<RoleSettingsPage />} />
+              <Route path="audit" element={<AuditLogsPage />} />
+            </Route>
+            
+            <Route path="settings">
+              <Route path="system" element={<SystemSettingsPage />} />
+              <Route path="notifications" element={<NotificationPreferencesPage />} />
+              <Route path="api" element={<APIIntegrationsPage />} />
+            </Route>
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
-export default App;// Main application - Sat Jun 21 02:05:22 WAT 2025
-// January development 5 - Sat Jun 21 02:05:32 WAT 2025
-// January development 10 - Sat Jun 21 02:05:33 WAT 2025
-// January development 15 - Sat Jun 21 02:05:35 WAT 2025
-// January development 20 - Sat Jun 21 02:05:35 WAT 2025
-// January development 25 - Sat Jun 21 02:05:36 WAT 2025
-// January development 30 - Sat Jun 21 02:05:37 WAT 2025
-// January development 35 - Sat Jun 21 02:05:37 WAT 2025
-// January development 40 - Sat Jun 21 02:05:38 WAT 2025
-// January development 45 - Sat Jun 21 02:05:39 WAT 2025
+export default App;

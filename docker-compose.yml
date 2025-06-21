@@ -47,4 +47,4 @@ volumes:
 
 networks:
   internal:
-    driver: bridge // CTF features - Sat Jun 21 02:05:47 WAT 2025
+    driver: bridge

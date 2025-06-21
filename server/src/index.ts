@@ -75,4 +75,4 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 // Start server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-}); // Backend API - Sat Jun 21 02:05:39 WAT 2025
+});

@@ -36,8 +36,7 @@ interface BGPPeer {
   lastUpdate: string;
 }
 
-// Mock data for BGP peers
-const mockPeers: BGPPeer[] = [
+const bgpPeers: BGPPeer[] = [
   {
     id: 'P1',
     peerIP: '192.168.1.1',
@@ -76,8 +75,7 @@ const mockPeers: BGPPeer[] = [
   }
 ];
 
-// Mock data for performance metrics
-const performanceData = [
+const performanceMetrics = [
   { time: '00:00', prefixes: 12000, updates: 150, withdraws: 10 },
   { time: '04:00', prefixes: 12200, updates: 180, withdraws: 15 },
   { time: '08:00', prefixes: 12100, updates: 200, withdraws: 20 },
@@ -86,8 +84,7 @@ const performanceData = [
   { time: '20:00', prefixes: 12500, updates: 280, withdraws: 35 }
 ];
 
-// Mock data for route changes
-const routeChangeData = [
+const routeChanges = [
   { time: '00:00', added: 120, removed: 80 },
   { time: '04:00', added: 150, removed: 100 },
   { time: '08:00', added: 180, removed: 120 },
@@ -96,8 +93,7 @@ const routeChangeData = [
   { time: '20:00', added: 250, removed: 200 }
 ];
 
-// Mock data for convergence time
-const convergenceData = [
+const convergenceTime = [
   { timestamp: '00:00', value: 2.5 },
   { timestamp: '04:00', value: 2.8 },
   { timestamp: '08:00', value: 3.0 },
@@ -109,7 +105,7 @@ const convergenceData = [
 const BGPStatusPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredPeers = mockPeers.filter(peer =>
+  const filteredPeers = bgpPeers.filter(peer =>
     peer.peerIP.toLowerCase().includes(searchTerm.toLowerCase()) ||
     peer.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
     peer.asn.toLowerCase().includes(searchTerm.toLowerCase())
@@ -142,7 +138,7 @@ const BGPStatusPage: React.FC = () => {
           <h3 className="text-lg font-medium text-gray-900 mb-4">Prefix Count Trend</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={performanceData}>
+              <AreaChart data={performanceMetrics}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="time" />
                 <YAxis />
@@ -157,7 +153,7 @@ const BGPStatusPage: React.FC = () => {
           <h3 className="text-lg font-medium text-gray-900 mb-4">Route Changes</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={routeChangeData}>
+              <BarChart data={routeChanges}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="time" />
                 <YAxis />
@@ -174,7 +170,7 @@ const BGPStatusPage: React.FC = () => {
           <h3 className="text-lg font-medium text-gray-900 mb-4">Convergence Time</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={convergenceData}>
+              <LineChart data={convergenceTime}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="timestamp" />
                 <YAxis />

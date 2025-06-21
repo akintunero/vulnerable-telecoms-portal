@@ -50,7 +50,6 @@ interface VPN {
   lastUpdate: string;
 }
 
-// Mock data for LSPs
 const mockLSPs: LSP[] = [
   {
     id: 'L1',
@@ -90,7 +89,6 @@ const mockLSPs: LSP[] = [
   }
 ];
 
-// Mock data for VPNs
 const mockVPNs: VPN[] = [
   {
     id: 'V1',
@@ -121,7 +119,6 @@ const mockVPNs: VPN[] = [
   }
 ];
 
-// Mock data for bandwidth utilization
 const bandwidthData = [
   { time: '00:00', utilization: 65, latency: 4 },
   { time: '04:00', utilization: 70, latency: 5 },
@@ -131,14 +128,12 @@ const bandwidthData = [
   { time: '20:00', utilization: 60, latency: 4 }
 ];
 
-// Mock data for LSP status distribution
 const lspStatusData = [
   { name: 'Up', value: 15 },
   { name: 'Warning', value: 3 },
   { name: 'Down', value: 2 }
 ];
 
-// Mock data for VPN types
 const vpnTypeData = [
   { name: 'L3 VPN', value: 12 },
   { name: 'L2 VPN', value: 8 }
