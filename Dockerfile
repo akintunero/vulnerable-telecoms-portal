@@ -12,4 +12,4 @@ COPY --from=builder /app/dist ./dist
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
 EXPOSE 5173
-ENTRYPOINT ["./docker-entrypoint.sh"] // Docker configuration - Sat Jun 21 02:05:47 WAT 2025
+ENTRYPOINT ["./docker-entrypoint.sh"] 
