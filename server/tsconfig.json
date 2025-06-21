@@ -17,4 +17,4 @@
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
-} // Database schema - Sat Jun 21 02:05:39 WAT 2025
+}

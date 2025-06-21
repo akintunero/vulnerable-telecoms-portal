@@ -80,4 +80,4 @@ For questions about contributing, contact:
 - **Name**: Olumayowa
 - **Email**: akintunero101@gmail.com
 
-Thank you for contributing to educational security! // Documentation - Sat Jun 21 02:05:47 WAT 2025
+Thank you for contributing to educational security!

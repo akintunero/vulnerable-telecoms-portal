@@ -38,4 +38,4 @@ export const adminOnly = async (req: Request, res: Response, next: NextFunction)
     return res.status(403).json({ error: 'Access denied. Admin only.' });
   }
   next();
-}; // Server functionality - Sat Jun 21 02:05:40 WAT 2025
+};

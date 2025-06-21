@@ -5,7 +5,7 @@ import { auth, adminOnly } from '../middleware/auth';
 const router = express.Router();
 
 // Get all security events
-router.get('/', auth, async (req, res) => {
+router.get('/', auth, async (req: any, res: any) => {
   try {
     const [events] = await pool.execute(
       'SELECT * FROM security_events ORDER BY created_at DESC'
@@ -17,7 +17,7 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get security event by ID
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', auth, async (req: any, res: any) => {
   try {
     const [events] = await pool.execute(
       'SELECT * FROM security_events WHERE id = ?',
@@ -37,7 +37,7 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Create new security event
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, async (req: any, res: any) => {
   try {
     const {
       event_type,
@@ -72,7 +72,7 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Update security event
-router.put('/:id', auth, adminOnly, async (req, res) => {
+router.put('/:id', auth, adminOnly, async (req: any, res: any) => {
   try {
     const {
       status,
@@ -98,7 +98,7 @@ router.put('/:id', auth, adminOnly, async (req, res) => {
 });
 
 // Delete security event
-router.delete('/:id', auth, adminOnly, async (req, res) => {
+router.delete('/:id', auth, adminOnly, async (req: any, res: any) => {
   try {
     const [result] = await pool.execute(
       'DELETE FROM security_events WHERE id = ?',
@@ -116,7 +116,7 @@ router.delete('/:id', auth, adminOnly, async (req, res) => {
 });
 
 // Get security statistics
-router.get('/stats/overview', auth, async (req, res) => {
+router.get('/stats/overview', auth, async (req: any, res: any) => {
   try {
     const [stats] = await pool.execute(`
       SELECT
@@ -138,7 +138,7 @@ router.get('/stats/overview', auth, async (req, res) => {
 });
 
 // Get events by type
-router.get('/type/:type', auth, async (req, res) => {
+router.get('/type/:type', auth, async (req: any, res: any) => {
   try {
     const [events] = await pool.execute(
       'SELECT * FROM security_events WHERE event_type = ? ORDER BY created_at DESC',
@@ -151,7 +151,7 @@ router.get('/type/:type', auth, async (req, res) => {
 });
 
 // Get events by severity threshold
-router.get('/severity/:threshold', auth, async (req, res) => {
+router.get('/severity/:threshold', auth, async (req: any, res: any) => {
   try {
     const [events] = await pool.execute(
       'SELECT * FROM security_events WHERE severity_score >= ? ORDER BY created_at DESC',
@@ -163,8 +163,4 @@ router.get('/severity/:threshold', auth, async (req, res) => {
   }
 });
 
-export default router; // February development 6 - Sat Jun 21 02:05:41 WAT 2025
-// February development 11 - Sat Jun 21 02:05:43 WAT 2025
-// February development 16 - Sat Jun 21 02:05:44 WAT 2025
-// February development 21 - Sat Jun 21 02:05:45 WAT 2025
-// February development 26 - Sat Jun 21 02:05:46 WAT 2025
+export default router;

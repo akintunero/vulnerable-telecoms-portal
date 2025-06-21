@@ -13,4 +13,4 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-export default pool; // API issues - Sat Jun 21 02:05:39 WAT 2025
+export default pool;

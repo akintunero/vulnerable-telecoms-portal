@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Plus, Search, Edit, Trash2, AlertCircle, Clock, CheckCircle } from 'lucide-react';
 import { mockApi } from '../../services/mockData';
 import type { Ticket } from '../../services/mockData';
-import { mockServiceTickets } from '../../lib/mockData';
+import { mockServiceTickets } from '../../services/mockData';
 
 interface TicketModalProps {
   isOpen: boolean;

@@ -52,4 +52,4 @@ async function initializeDatabase() {
 }
 
 // Run the initialization
-initializeDatabase(); // Database schema - Sat Jun 21 02:05:40 WAT 2025
+initializeDatabase();

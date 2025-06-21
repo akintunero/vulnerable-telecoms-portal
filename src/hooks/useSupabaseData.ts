@@ -68,4 +68,4 @@ export function useRealtimeData<T>(
   }, [table, refetch]);
 
   return { data, loading, error, refetch };
-}// Custom hooks - Sat Jun 21 02:05:28 WAT 2025
+}

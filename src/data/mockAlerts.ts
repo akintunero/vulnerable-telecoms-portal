@@ -81,4 +81,4 @@ export const mockAlerts: Alert[] = [
     source: 'Update Manager',
     status: 'resolved'
   }
-]; // Mock data - Sat Jun 21 02:05:28 WAT 2025
+];

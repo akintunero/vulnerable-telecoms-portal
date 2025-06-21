@@ -1,5 +1,5 @@
 import React from 'react';
-import { mockSecurityEvents } from '../../lib/mockData';
+import { mockSecurityAlerts } from '../../services/mockData';
 
 const AlertsPage: React.FC = () => {
   const getSeverityColor = (severity: number) => {
@@ -60,7 +60,7 @@ const AlertsPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {mockSecurityEvents.map((event) => (
+              {mockSecurityAlerts.map((event) => (
                 <tr key={event.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getEventTypeColor(event.event_type)}`}>

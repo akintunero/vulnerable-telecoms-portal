@@ -23,4 +23,4 @@ const DashboardLayout: React.FC = () => {
   );
 };
 
-export default DashboardLayout;// Dashboard layout - Sat Jun 21 02:05:23 WAT 2025
+export default DashboardLayout;

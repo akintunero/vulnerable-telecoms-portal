@@ -194,7 +194,4 @@ router.get('/download', auth, adminOnly, (req, res) => {
   });
 });
 
-export default router; // February development 10 - Sat Jun 21 02:05:42 WAT 2025
-// February development 15 - Sat Jun 21 02:05:44 WAT 2025
-// February development 20 - Sat Jun 21 02:05:45 WAT 2025
-// February development 25 - Sat Jun 21 02:05:46 WAT 2025
+export default router;

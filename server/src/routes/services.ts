@@ -1,6 +1,7 @@
 import express from 'express';
 import pool from '../config/database';
 import { auth, adminOnly } from '../middleware/auth';
+import { ResultSetHeader } from 'mysql2';
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ router.post('/provision', async (req, res) => {
     const [result] = await pool.execute(
       'INSERT INTO services (customer_id, service_type, configuration, status) VALUES (?, ?, ?, ?)',
       [customer_id, service_type, JSON.stringify(configuration), 'active']
-    );
+    ) as [ResultSetHeader, any];
     
     res.status(201).json({ message: 'Service provisioned successfully', service_id: result.insertId });
   } catch (error) {
@@ -21,8 +22,4 @@ router.post('/provision', async (req, res) => {
   }
 });
 
-export default router; // February development 8 - Sat Jun 21 02:05:42 WAT 2025
-// February development 13 - Sat Jun 21 02:05:43 WAT 2025
-// February development 18 - Sat Jun 21 02:05:44 WAT 2025
-// February development 23 - Sat Jun 21 02:05:45 WAT 2025
-// February development 28 - Sat Jun 21 02:05:46 WAT 2025
+export default router; 

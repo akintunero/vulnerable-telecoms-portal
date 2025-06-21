@@ -1,5 +1,56 @@
 import React from 'react';
-import { mockNetworkNodes } from '../../lib/mockData';
+
+// Mock data for network nodes
+const mockNetworkNodes = [
+  {
+    id: '1',
+    node_id: 'CORE001',
+    location: 'Data Center A',
+    status: 'online',
+    load_percentage: 45,
+    uptime_percentage: 99.9
+  },
+  {
+    id: '2',
+    node_id: 'DIST001',
+    location: 'Floor 1',
+    status: 'online',
+    load_percentage: 28,
+    uptime_percentage: 99.8
+  },
+  {
+    id: '3',
+    node_id: 'DIST002',
+    location: 'Floor 2',
+    status: 'warning',
+    load_percentage: 78,
+    uptime_percentage: 98.5
+  },
+  {
+    id: '4',
+    node_id: 'ACCESS001',
+    location: 'Building A',
+    status: 'online',
+    load_percentage: 35,
+    uptime_percentage: 99.7
+  },
+  {
+    id: '5',
+    node_id: 'ACCESS002',
+    location: 'Building B',
+    status: 'online',
+    load_percentage: 42,
+    uptime_percentage: 99.6
+  },
+  {
+    id: '6',
+    node_id: 'WIFI001',
+    location: 'Floor 1',
+    status: 'offline',
+    load_percentage: 0,
+    uptime_percentage: 0
+  }
+];
 
 const NetworkManagementPage: React.FC = () => {
   const getStatusColor = (status: string) => {

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Search, Edit, Trash2, Phone, Mail, Building } from 'lucide-react';
-import { mockApi } from '../../services/mockData';
+import { mockApi, mockCustomers } from '../../services/mockData';
 import type { Customer } from '../../services/mockData';
-import { mockCustomers } from '../../lib/mockData';
 
 interface CustomerModalProps {
   isOpen: boolean;
@@ -337,4 +336,4 @@ const CustomersPage: React.FC = () => {
   );
 };
 
-export default CustomersPage; // Customer management - Sat Jun 21 02:05:26 WAT 2025
+export default CustomersPage;

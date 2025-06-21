@@ -1,16 +1,6 @@
 import React, { useState } from 'react';
+import { Search, ZoomIn, ZoomOut, RefreshCw, Settings, Download, Filter } from 'lucide-react';
 import {
-  Search,
-  RefreshCw,
-  Download,
-  Filter,
-  MoreVertical,
-  Map,
-  ZoomIn,
-  ZoomOut,
-  Layers,
-  Maximize2,
-  Minimize2,
   BarChart,
   Bar,
   LineChart,
@@ -24,7 +14,7 @@ import {
   PieChart,
   Pie,
   Cell
-} from 'lucide-react';
+} from 'recharts';
 
 interface NetworkNode {
   id: string;

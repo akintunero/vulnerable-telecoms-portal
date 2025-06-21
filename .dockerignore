@@ -55,4 +55,18 @@ netflow/
 
 # OS
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# Additional changes
+node_modules
+npm-debug.log
+README.md
+.nyc_output
+coverage
+dist
+build
+.vscode
+.idea
+*.swp
+*.swo
+*~ 

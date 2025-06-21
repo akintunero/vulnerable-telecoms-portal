@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface User {
   id: string;
@@ -13,6 +14,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,6 +29,8 @@ export const useAuth = () => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Check if user is stored in localStorage
@@ -39,6 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.removeItem('user');
       }
     }
+    setIsLoading(false);
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
@@ -54,6 +59,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(user);
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('last_login', new Date().toISOString());
+      console.log('Login successful, redirecting to dashboard...');
+      navigate('/dashboard');
       return true;
     }
     if (email === 'sys@telco.com' && password === 'sysaccess') {
@@ -67,6 +74,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(sysUser);
       localStorage.setItem('user', JSON.stringify(sysUser));
       localStorage.setItem('last_login', new Date().toISOString());
+      console.log('Login successful, redirecting to dashboard...');
+      navigate('/dashboard');
       return true;
     }
     return false;
@@ -76,19 +85,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     console.log('Logging out');
     setUser(null);
     localStorage.removeItem('user');
-    window.location.href = '/login';
+    navigate('/login');
   };
 
   const value = {
     user,
     login,
     logout,
-    isAuthenticated: !!user
+    isAuthenticated: !!user,
+    isLoading
   };
 
-  console.log('AuthContext state:', { user, isAuthenticated: !!user });
+  console.log('AuthContext state:', { user, isAuthenticated: !!user, isLoading });
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export default AuthContext; // Auth context - Sat Jun 21 02:05:24 WAT 2025
+export default AuthContext;

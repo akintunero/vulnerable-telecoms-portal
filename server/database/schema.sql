@@ -179,4 +179,4 @@ INSERT INTO security_events (event_type, title, description, source_ip, affected
 
 -- Insert sample compliance audits
 INSERT INTO compliance_audits (audit_type, requirement_name, status, score, last_audit_date, next_audit_date, auditor, notes) VALUES
-('security', 'Data Encryption', 'passed', 95, '2025-05-01', '2025-06-01', 'Security Team', 'All encryption requirements met'); // Server code - Sat Jun 21 02:05:39 WAT 2025
+('security', 'Data Encryption', 'passed', 95, '2025-05-01', '2025-06-01', 'Security Team', 'All encryption requirements met');

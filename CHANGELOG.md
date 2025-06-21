@@ -111,7 +111,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute to this 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. // March development 8 - Sat Jun 21 02:05:49 WAT 2025
-// March development 13 - Sat Jun 21 02:05:49 WAT 2025
-// March development 18 - Sat Jun 21 02:05:50 WAT 2025
-// March development 23 - Sat Jun 21 02:05:51 WAT 2025
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

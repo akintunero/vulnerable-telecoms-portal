@@ -15,7 +15,7 @@ import {
   CheckCircle2,
   XCircle
 } from 'lucide-react';
-import { mockSecurityEvents } from '../../lib/mockData';
+import { mockSecurityAlerts } from '../../services/mockData';
 
 interface SecurityAlert {
   id: string;
@@ -217,7 +217,7 @@ const SecurityPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {mockSecurityEvents.map((event) => (
+              {mockSecurityAlerts.map((event) => (
                 <tr key={event.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {event.title}
@@ -258,4 +258,4 @@ const SecurityPage: React.FC = () => {
   );
 };
 
-export default SecurityPage; // Security monitoring - Sat Jun 21 02:05:27 WAT 2025
+export default SecurityPage;

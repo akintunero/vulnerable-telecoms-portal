@@ -10,6 +10,11 @@ import DeviceMonitoringPage from './pages/network/DeviceMonitoringPage';
 import IncidentLogsPage from './pages/network/IncidentLogsPage';
 import BandwidthUtilizationPage from './pages/network/BandwidthUtilizationPage';
 import OpticalPowerPage from './pages/network/OpticalPowerPage';
+import BGPStatusPage from './pages/network/bgp/BGPStatusPage';
+import MPLSDetailsPage from './pages/network/mpls/MPLSDetailsPage';
+import NetworkMapPage from './pages/network/map/NetworkMapPage';
+import FibreMapPage from './pages/network/fibre/FibreMapPage';
+import ThreatMapPage from './pages/network/threat/ThreatMapPage';
 import ServiceQualityPage from './pages/service-quality/ServiceQualityPage';
 
 import CustomerManagementPage from './pages/customer-management/CustomerManagementPage';
@@ -33,7 +38,7 @@ import SecurityAlertsPage from './pages/security/SecurityAlertsPage';
 import FirewallMonitoringPage from './pages/security/FirewallMonitoringPage';
 import ComplianceReportsPage from './pages/security/ComplianceReportsPage';
 
-import ReportingPage from './pages/reports/ReportingPage';
+import ReportingPage from './pages/ReportingPage';
 import CustomReportBuilderPage from './pages/reports/CustomReportBuilderPage';
 import FinancialKPIsPage from './pages/reports/FinancialKPIsPage';
 import UsageReportsPage from './pages/reports/UsageReportsPage';
@@ -59,8 +64,8 @@ import Layout from './components/layout/Layout';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           
@@ -144,8 +149,8 @@ function App() {
             </Route>
           </Route>
         </Routes>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 

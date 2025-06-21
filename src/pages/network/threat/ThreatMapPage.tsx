@@ -13,6 +13,8 @@ import {
   AlertTriangle,
   AlertCircle,
   AlertOctagon,
+} from 'lucide-react';
+import {
   BarChart,
   Bar,
   LineChart,
@@ -26,7 +28,7 @@ import {
   PieChart,
   Pie,
   Cell
-} from 'lucide-react';
+} from 'recharts';
 
 interface Threat {
   id: string;
