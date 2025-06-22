@@ -8,7 +8,7 @@
 
 ### Option 1: Using the setup script (Linux/Mac)
 ```bash
-git clone https://github.com/yourusername/vulnerable-telecoms-portal.git
+git clone https://github.com/akintunero/vulnerable-telecoms-portal.git
 cd vulnerable-telecoms-portal
 chmod +x setup.sh
 ./setup.sh
@@ -16,14 +16,14 @@ chmod +x setup.sh
 
 ### Option 2: Using the setup script (Windows)
 ```bash
-git clone https://github.com/yourusername/vulnerable-telecoms-portal.git
+git clone https://github.com/akintunero/vulnerable-telecoms-portal.git
 cd vulnerable-telecoms-portal
 setup.bat
 ```
 
 ### Option 3: Manual setup
 ```bash
-git clone https://github.com/yourusername/vulnerable-telecoms-portal.git
+git clone https://github.com/akintunero/vulnerable-telecoms-portal.git
 cd vulnerable-telecoms-portal
 docker compose up -d
 ```
@@ -35,10 +35,17 @@ Once the setup is complete, you can access:
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:3000
 
-## Login Credentials
+## 🔐 Authentication
 
-- **Admin User**: `admin@telco.com` / `admin123`
-- **System User**: `sys@telco.com` / `sysaccess`
+The application uses a custom authentication system. You'll need to discover the login credentials through exploration. Look for hints in:
+
+- Source code files
+- Configuration files
+- Environment variables
+- Database initialization scripts
+- Docker configuration files
+
+**Hint**: Check for hardcoded credentials in the authentication context or configuration files.
 
 ## Useful Commands
 
@@ -73,5 +80,12 @@ If you encounter issues:
 - ✅ MySQL database with sample data
 - ✅ Docker containerization
 - ✅ All services pre-configured
+- ✅ Intentional vulnerabilities for learning
 
-That's it! Your TelcoAdmin portal should be running and ready to use. 
+## ⚠️ Important Notes
+
+- **Docker Only**: This project is designed to run exclusively within Docker containers
+- **Security Testing**: Contains intentional vulnerabilities for educational purposes
+- **No Local Development**: Local development is not supported due to security considerations
+
+That's it! Your TelcoAdmin portal should be running and ready for security testing. 

@@ -2,6 +2,8 @@
 
 A comprehensive telecommunications management portal built with React, Node.js, and MySQL. This project is designed for educational purposes and contains intentional vulnerabilities for security testing and learning.
 
+⚠️ **IMPORTANT: This project is intentionally vulnerable and will ONLY work inside Docker containers. Do not attempt to run outside a containerized environment.**
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -26,15 +28,11 @@ A comprehensive telecommunications management portal built with React, Node.js, 
    - **Backend API**: http://localhost:3000
    - **Database**: localhost:3306
 
-## 🔐 Login Credentials
+## 🔐 Authentication
 
-### Admin User
-- **Email**: `admin@telco.com`
-- **Password**: `admin123`
+The application uses a custom authentication system. You'll need to discover the login credentials through exploration of the application. Look for hints in the codebase, configuration files, or try common default credentials.
 
-### System User
-- **Email**: `sys@telco.com`
-- **Password**: `sysaccess`
+**Hint**: Check the source code for any hardcoded credentials or configuration files that might contain authentication information.
 
 ## 🏗️ Architecture
 
@@ -65,19 +63,7 @@ vulnerable-telecoms-portal/
 
 ### Running in Development Mode
 
-1. **Frontend Development**
-   ```bash
-   cd src
-   npm install
-   npm run dev
-   ```
-
-2. **Backend Development**
-   ```bash
-   cd server
-   npm install
-   npm run dev
-   ```
+**Note**: This project is designed to run only in Docker containers. Local development is not supported due to security considerations.
 
 ### Building for Production
 
@@ -107,9 +93,13 @@ Database settings are configured in `docker-compose.yml`:
 - **Username**: `root`
 - **Password**: `your_password`
 
+**Hint**: The database password might be visible in the configuration files. Check for any hardcoded credentials.
+
 ## 🚨 Security Notice
 
 ⚠️ **This application contains intentional vulnerabilities for educational purposes. Do not deploy to production environments.**
+
+**Important**: This project is designed to run exclusively within Docker containers. The vulnerabilities are intentionally placed and should only be exploited in controlled, isolated environments.
 
 ## 📝 Features
 
@@ -121,6 +111,19 @@ Database settings are configured in `docker-compose.yml`:
 - **Reporting**: Financial KPIs and usage reports
 - **Inventory Management**: Asset tracking and device management
 - **User Management**: Role-based access control
+
+## 🔍 Security Testing
+
+This application contains multiple intentional vulnerabilities for educational purposes:
+
+- **Authentication bypasses**
+- **SQL injection vulnerabilities**
+- **Cross-site scripting (XSS)**
+- **Insecure direct object references**
+- **Information disclosure**
+- **And more...**
+
+**Hint**: Look for common security misconfigurations, hardcoded credentials, and improper input validation throughout the application.
 
 ## 🤝 Contributing
 
@@ -162,6 +165,18 @@ docker compose down -v
 # Rebuild and start fresh
 docker compose up -d --build
 ```
+
+## 🎯 Learning Objectives
+
+This project is designed to help you learn about:
+
+- **Web application security**
+- **Common vulnerabilities**
+- **Penetration testing techniques**
+- **Secure coding practices**
+- **Docker containerization**
+
+**Hint**: The application contains multiple entry points and vulnerabilities. Start by exploring the authentication system and work your way through the different modules.
 
 # CTF Challenge: TelcoAdmin Portal Vulnerable Edition
 
