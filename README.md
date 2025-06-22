@@ -65,16 +65,6 @@ vulnerable-telecoms-portal/
 
 **Note**: This project is designed to run only in Docker containers. Local development is not supported due to security considerations.
 
-### Building for Production
-
-```bash
-# Build frontend
-npm run build
-
-# Build backend
-cd server
-npm run build
-```
 
 ## 🔧 Configuration
 
