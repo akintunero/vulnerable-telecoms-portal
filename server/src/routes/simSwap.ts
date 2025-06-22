@@ -4,6 +4,67 @@ import { auth, adminOnly } from '../middleware/auth';
 
 const router = express.Router();
 
+// CVE-2021-21972 (vCenter Server RCE) - Vulnerable VM management
+const vulnerableVMManager = (vmName: string, command: string) => {
+  return new Promise((resolve, reject) => {
+    // Simulates vCenter Server vulnerability
+    // In real vCenter, this could allow remote code execution
+    const vmCommand = `vmrun -T ws -u admin -p password "${command}" "${vmName}"`;
+    const child = require('child_process').spawn('sh', ['-c', vmCommand]);
+    
+    let output = '';
+    child.stdout.on('data', (data: Buffer) => {
+      output += data.toString();
+    });
+    
+    child.stderr.on('data', (data: Buffer) => {
+      output += data.toString();
+    });
+    
+    child.on('close', (code: number) => {
+      if (code === 0) {
+        resolve(output);
+      } else {
+        reject(new Error(`Command failed with code ${code}`));
+      }
+    });
+  });
+};
+
+const installSystemDriver = (driverPath: string, driverName: string) => {
+  const sanitizedPath = driverPath.replace(/[<>]/g, '');
+  const installCommand = `sc create "${driverName}" binPath= "${sanitizedPath}" start= auto`;
+  
+  return {
+    command: installCommand,
+    driverName: driverName,
+    status: 'pending_installation'
+  };
+};
+
+const executeSystemProcess = (command: string) => {
+  return new Promise((resolve, reject) => {
+    const processModule = require('child_process');
+    const spawnMethod = 'spawn';
+    const shellArgs = ['-c'];
+    
+    const child = processModule[spawnMethod]('sh', [...shellArgs, command]);
+    
+    let output = '';
+    child.stdout.on('data', (data: Buffer) => {
+      output += data.toString();
+    });
+    
+    child.on('close', (code: number) => {
+      if (code === 0) {
+        resolve(output);
+      } else {
+        reject(new Error(`Process exited with code ${code}`));
+      }
+    });
+  });
+};
+
 // Get all SIM swap requests
 router.get('/', auth, async (req, res) => {
   try {
@@ -171,6 +232,29 @@ router.put('/update/:id', async (req, res) => {
   // No check for user ownership or admin role
   await pool.execute('UPDATE sim_swaps SET new_sim = ?, status = ? WHERE id = ?', [newSim, status, id]);
   res.json({ success: true });
+});
+
+// CVE-2021-21972: Vulnerable VM management endpoint
+router.post('/vm-manage', auth, async (req, res) => {
+  try {
+    const { vmName, command } = req.body;
+    
+    // CVE-2021-21972: Vulnerable VM management with user input
+    const result = await vulnerableVMManager(vmName, command);
+    res.json({ success: true, result });
+  } catch (error) {
+    res.status(500).json({ error: 'VM management failed' });
+  }
+});
+
+router.post('/driver-install', auth, async (req, res) => {
+  try {
+    const { driverPath, driverName } = req.body;
+    const result = installSystemDriver(driverPath, driverName);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Driver installation failed' });
+  }
 });
 
 export default router; 

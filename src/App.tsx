@@ -84,7 +84,7 @@ function App() {
               <Route path="bgp" element={<BGPStatusPage />} />
               <Route path="mpls" element={<MPLSDetailsPage />} />
               <Route path="map" element={<NetworkMapPage />} />
-              <Route path="fiber" element={<FibreMapPage />} />
+              <Route path="fibre-map" element={<FibreMapPage />} />
               <Route path="threat" element={<ThreatMapPage />} />
             </Route>
             

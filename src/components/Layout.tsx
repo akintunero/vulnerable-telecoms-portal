@@ -1,221 +1,241 @@
 import React, { useState } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
   HomeIcon,
-  CubeIcon,
   UsersIcon,
-  TicketIcon,
-  BellIcon,
-  ClipboardDocumentListIcon,
-  UserGroupIcon,
-  GlobeAltIcon,
+  CogIcon,
   ChartBarIcon,
   ShieldCheckIcon,
-  ChartPieIcon,
-  CodeBracketIcon,
-  SignalIcon,
-  ClockIcon,
-  UserIcon,
-  ArrowPathIcon,
-  MapIcon,
   WifiIcon,
+  PhoneIcon,
+  DocumentTextIcon,
   ExclamationTriangleIcon,
+  ClipboardDocumentListIcon,
+  CurrencyDollarIcon,
+  ChartPieIcon,
+  BellIcon,
+  UserCircleIcon,
   Bars3Icon,
   XMarkIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
+  ChevronRightIcon
 } from '@heroicons/react/24/outline';
 
-const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
-  { name: 'Inventory', href: '/inventory', icon: CubeIcon },
-  { name: 'Customers', href: '/customers', icon: UsersIcon },
-  { name: 'Tickets', href: '/tickets', icon: TicketIcon },
-  { name: 'Alerts', href: '/alerts', icon: BellIcon },
-  { name: 'Audit Logs', href: '/audit-logs', icon: ClipboardDocumentListIcon },
-  { name: 'Customer Management', href: '/customer-management', icon: UserGroupIcon },
-  { name: 'Network Management', href: '/network-management', icon: GlobeAltIcon },
-  { name: 'Reporting', href: '/reporting', icon: ChartBarIcon },
-  { name: 'Security', href: '/security', icon: ShieldCheckIcon },
-  { name: 'Service Quality', href: '/service-quality', icon: ChartPieIcon },
-  { name: 'API Integrations', href: '/api-integrations', icon: CodeBracketIcon },
-  { name: 'Optical Power', href: '/optical-power', icon: SignalIcon },
-  { name: 'SLA Monitoring', href: '/sla-monitoring', icon: ClockIcon },
-  { name: 'Subscriber Management', href: '/subscriber-management', icon: UserIcon },
-  { name: 'Change Management', href: '/change-management', icon: ArrowPathIcon }
-];
-
-const networkSubmenu = [
-  { name: 'Network Map', href: '/network/map', icon: MapIcon },
-  { name: 'Fiber Map', href: '/network/fiber', icon: WifiIcon },
-  { name: 'BGP Status', href: '/network/bgp', icon: GlobeAltIcon },
-  { name: 'MPLS Details', href: '/network/mpls', icon: SignalIcon },
-  { name: 'Threat Map', href: '/network/threat', icon: ExclamationTriangleIcon }
-];
-
-const Layout: React.FC = () => {
+const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [networkSubmenuOpen, setNetworkSubmenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const location = useLocation();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isNetworkMenuOpen, setIsNetworkMenuOpen] = useState(false);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const navigation = [
+    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
+    { name: 'Customer Management', href: '/customers', icon: UsersIcon },
+    { name: 'Network Management', href: '#', icon: WifiIcon, hasSubmenu: true },
+    { name: 'Service Management', href: '/services', icon: PhoneIcon },
+    { name: 'Security', href: '/security', icon: ShieldCheckIcon },
+    { name: 'Reports', href: '/reports', icon: ChartBarIcon },
+    { name: 'Tickets', href: '/tickets', icon: DocumentTextIcon },
+    { name: 'Alerts', href: '/alerts', icon: ExclamationTriangleIcon },
+    { name: 'Change Management', href: '/change-management', icon: ClipboardDocumentListIcon },
+    { name: 'Financial', href: '/financial', icon: CurrencyDollarIcon },
+    { name: 'Compliance', href: '/compliance', icon: ChartPieIcon },
+    { name: 'Settings', href: '/settings', icon: CogIcon },
+  ];
 
-  const toggleNetworkMenu = () => {
-    setIsNetworkMenuOpen(!isNetworkMenuOpen);
+  const networkSubmenu = [
+    { name: 'Network Overview', href: '/network' },
+    { name: 'Device Monitoring', href: '/network/devices' },
+    { name: 'Bandwidth Utilization', href: '/network/bandwidth' },
+    { name: 'Incident Logs', href: '/network/incidents' },
+    { name: 'Network Map', href: '/network/map' },
+  ];
+
+  const isActive = (href: string) => {
+    if (href === '#') return false;
+    return location.pathname === href || location.pathname.startsWith(href + '/');
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Mobile sidebar backdrop */}
-      {!isSidebarOpen && (
-        <div
-          className="fixed inset-0 z-20 bg-gray-900/50 lg:hidden"
-          onClick={toggleSidebar}
-        />
-      )}
-
-      {/* Sidebar */}
-      <div
-        className={`fixed inset-y-0 left-0 z-30 w-64 transform bg-white shadow-lg transition-transform duration-300 ease-in-out lg:translate-x-0 ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="flex h-16 items-center justify-between px-4">
-          <div className="flex items-center">
-            <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <WifiIcon className="h-5 w-5 text-white" />
+      <div className="lg:hidden">
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
+          <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white">
+            <div className="flex h-16 items-center justify-between px-4">
+              <h1 className="text-xl font-semibold text-gray-900">Telco Admin</h1>
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
             </div>
-            <span className="ml-2 text-xl font-semibold text-gray-900">TelcoAdmin</span>
+            <nav className="flex-1 space-y-1 px-2 py-4">
+              {navigation.map((item) => (
+                <div key={item.name}>
+                  {item.hasSubmenu ? (
+                    <div>
+                      <button
+                        onClick={() => setNetworkSubmenuOpen(!networkSubmenuOpen)}
+                        className={`group flex w-full items-center px-2 py-2 text-sm font-medium rounded-md ${
+                          isActive(item.href)
+                            ? 'bg-gray-100 text-gray-900'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        }`}
+                      >
+                        <item.icon className="mr-3 h-6 w-6" />
+                        {item.name}
+                        {networkSubmenuOpen ? (
+                          <ChevronDownIcon className="ml-auto h-4 w-4" />
+                        ) : (
+                          <ChevronRightIcon className="ml-auto h-4 w-4" />
+                        )}
+                      </button>
+                      {networkSubmenuOpen && (
+                        <div className="ml-8 space-y-1">
+                          {networkSubmenu.map((subItem) => (
+                            <Link
+                              key={subItem.name}
+                              to={subItem.href}
+                              className={`block px-2 py-2 text-sm rounded-md ${
+                                isActive(subItem.href)
+                                  ? 'bg-gray-100 text-gray-900'
+                                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                              }`}
+                            >
+                              {subItem.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      to={item.href}
+                      className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                        isActive(item.href)
+                          ? 'bg-gray-100 text-gray-900'
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      }`}
+                    >
+                      <item.icon className="mr-3 h-6 w-6" />
+                      {item.name}
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </nav>
           </div>
-          <button
-            onClick={toggleSidebar}
-            className="rounded-md p-2 text-gray-500 hover:bg-gray-100 lg:hidden"
-          >
-            <XMarkIcon className="h-6 w-6" />
-          </button>
         </div>
+      </div>
 
-        <nav className="mt-5 space-y-1 px-2">
-          {navigation.map((item) => (
-            <Link
-              key={item.name}
-              to={item.href}
-              className={`group flex items-center rounded-md px-2 py-2 text-sm font-medium ${
-                location.pathname === item.href
-                  ? 'bg-indigo-50 text-indigo-600'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-              }`}
-            >
-              <item.icon
-                className={`mr-3 h-5 w-5 flex-shrink-0 ${
-                  location.pathname === item.href
-                    ? 'text-indigo-600'
-                    : 'text-gray-400 group-hover:text-gray-500'
-                }`}
-              />
-              {item.name}
-            </Link>
-          ))}
-
-          {/* Network Management Submenu */}
-          <div>
-            <button
-              onClick={toggleNetworkMenu}
-              className={`group flex w-full items-center rounded-md px-2 py-2 text-sm font-medium ${
-                location.pathname.startsWith('/network')
-                  ? 'bg-indigo-50 text-indigo-600'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-              }`}
-            >
-              <GlobeAltIcon
-                className={`mr-3 h-5 w-5 flex-shrink-0 ${
-                  location.pathname.startsWith('/network')
-                    ? 'text-indigo-600'
-                    : 'text-gray-400 group-hover:text-gray-500'
-                }`}
-              />
-              <span className="flex-1">Network</span>
-              <ChevronDownIcon
-                className={`h-5 w-5 transform transition-transform ${
-                  isNetworkMenuOpen ? 'rotate-180' : ''
-                }`}
-              />
-            </button>
-            {isNetworkMenuOpen && (
-              <div className="mt-1 space-y-1 pl-4">
-                {networkSubmenu.map((item) => (
+      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
+        <div className="flex flex-col flex-grow bg-white border-r border-gray-200">
+          <div className="flex h-16 items-center px-4">
+            <h1 className="text-xl font-semibold text-gray-900">Telco Admin</h1>
+          </div>
+          <nav className="flex-1 space-y-1 px-2 py-4">
+            {navigation.map((item) => (
+              <div key={item.name}>
+                {item.hasSubmenu ? (
+                  <div>
+                    <button
+                      onClick={() => setNetworkSubmenuOpen(!networkSubmenuOpen)}
+                      className={`group flex w-full items-center px-2 py-2 text-sm font-medium rounded-md ${
+                        isActive(item.href)
+                          ? 'bg-gray-100 text-gray-900'
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      }`}
+                    >
+                      <item.icon className="mr-3 h-6 w-6" />
+                      {item.name}
+                      {networkSubmenuOpen ? (
+                        <ChevronDownIcon className="ml-auto h-4 w-4" />
+                      ) : (
+                        <ChevronRightIcon className="ml-auto h-4 w-4" />
+                      )}
+                    </button>
+                    {networkSubmenuOpen && (
+                      <div className="ml-8 space-y-1">
+                        {networkSubmenu.map((subItem) => (
+                          <Link
+                            key={subItem.name}
+                            to={subItem.href}
+                            className={`block px-2 py-2 text-sm rounded-md ${
+                              isActive(subItem.href)
+                                ? 'bg-gray-100 text-gray-900'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                            }`}
+                          >
+                            {subItem.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
                   <Link
-                    key={item.name}
                     to={item.href}
-                    className={`group flex items-center rounded-md px-2 py-2 text-sm font-medium ${
-                      location.pathname === item.href
-                        ? 'bg-indigo-50 text-indigo-600'
+                    className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                      isActive(item.href)
+                        ? 'bg-gray-100 text-gray-900'
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     }`}
                   >
-                    <item.icon
-                      className={`mr-3 h-5 w-5 flex-shrink-0 ${
-                        location.pathname === item.href
-                          ? 'text-indigo-600'
-                          : 'text-gray-400 group-hover:text-gray-500'
-                      }`}
-                    />
+                    <item.icon className="mr-3 h-6 w-6" />
                     {item.name}
                   </Link>
-                ))}
+                )}
               </div>
-            )}
-          </div>
-        </nav>
+            ))}
+          </nav>
+        </div>
       </div>
 
-      {/* Main content */}
-      <div className={`lg:pl-64 ${isSidebarOpen ? 'pl-64' : 'pl-0'}`}>
-        {/* Top navigation */}
-        <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white shadow">
+      <div className="lg:pl-64">
+        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
           <button
-            onClick={toggleSidebar}
-            className="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 lg:hidden"
+            type="button"
+            className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+            onClick={() => setSidebarOpen(true)}
           >
             <Bars3Icon className="h-6 w-6" />
           </button>
 
-          <div className="flex flex-1 justify-between px-4">
-            <div className="flex flex-1">
-              <h1 className="text-xl font-semibold text-gray-900 flex items-center">
-                {navigation.find(item => item.href === location.pathname)?.name || 'Dashboard'}
-              </h1>
-            </div>
-            <div className="ml-4 flex items-center md:ml-6">
-              <div className="relative ml-3">
-                <div className="flex items-center space-x-3">
-                  <img
-                    className="h-8 w-8 rounded-full"
-                    src={user?.avatar || 'https://via.placeholder.com/40'}
-                    alt=""
-                  />
-                  <span className="text-sm font-medium text-gray-700">
-                    {user?.name}
-                  </span>
-                  <button
-                    onClick={logout}
-                    className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
-                  >
-                    Logout
-                  </button>
+          <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+            <div className="flex flex-1" />
+            <div className="flex items-center gap-x-4 lg:gap-x-6">
+              <button className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
+                <BellIcon className="h-6 w-6" />
+              </button>
+              <div className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200" />
+              <div className="flex items-center gap-x-4">
+                <img
+                  className="h-8 w-8 rounded-full bg-gray-50"
+                  src={user?.avatar || 'https://via.placeholder.com/40'}
+                  alt=""
+                />
+                <div className="hidden lg:flex lg:flex-col lg:items-end">
+                  <p className="text-sm font-semibold leading-6 text-gray-900">
+                    {user?.name || 'User'}
+                  </p>
+                  <p className="text-xs leading-5 text-gray-500">{user?.role || 'User'}</p>
                 </div>
+                <button
+                  onClick={logout}
+                  className="text-sm font-medium text-gray-700 hover:text-gray-900"
+                >
+                  Logout
+                </button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Page content */}
         <main className="py-6">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <Outlet />
+            {children}
           </div>
         </main>
       </div>

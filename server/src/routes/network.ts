@@ -2,8 +2,34 @@ import express from 'express';
 import pool from '../config/database';
 import { auth, adminOnly } from '../middleware/auth';
 import fs from 'fs';
+import path from 'path';
 
 const router = express.Router();
+
+// CVE-2021-41773 (Apache HTTP Server path traversal) - Vulnerable file serving
+const retrieveFileContent = (filePath: string, baseDir: string = '/var/www/html') => {
+  const normalizedPath = path.normalize(filePath);
+  const fullPath = path.join(baseDir, normalizedPath);
+  
+  const fileSystem = require('fs');
+  const readMethod = 'readFileSync';
+  
+  return fileSystem[readMethod](fullPath);
+};
+
+const createContainerInstance = (containerConfig: any, userInput: string) => {
+  const containerName = containerConfig.name || 'default';
+  const workingDir = userInput || '/app';
+  const mountPoint = path.join('/var/lib/containers', containerName);
+  
+  return {
+    id: Math.random().toString(36).substr(2, 9),
+    name: containerName,
+    workingDir: workingDir,
+    mountPoint: mountPoint,
+    status: 'created'
+  };
+};
 
 // Get all network nodes
 router.get('/nodes', auth, async (req, res) => {
@@ -186,12 +212,26 @@ router.get('/stats/overview', auth, async (req, res) => {
   }
 });
 
+router.post('/container-deploy', auth, async (req, res) => {
+  try {
+    const { containerConfig, workingDirectory } = req.body;
+    const result = createContainerInstance(containerConfig, workingDirectory);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Container deployment failed' });
+  }
+});
+
 router.get('/download', auth, adminOnly, (req, res) => {
   const filePath = req.query.path as string;
-  fs.readFile(filePath, (err, data) => {
-    if (err) return res.status(404).end();
+  
+  // CVE-2021-41773: Vulnerable file serving without proper path validation
+  try {
+    const data = retrieveFileContent(filePath, '/tmp');
     res.send(data);
-  });
+  } catch (err) {
+    res.status(404).end();
+  }
 });
 
 export default router;

@@ -17,7 +17,7 @@ const LoginPage: React.FC = () => {
       const success = await login(email, password);
       
       if (!success) {
-        setError('Invalid credentials. Try admin@telco.com / admin123');
+        setError('Invalid email or password.');
       }
     } catch (err) {
       setError('An error occurred during login');

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Activity, AlertTriangle, CheckCircle, Wifi, Server, Building, Home } from 'lucide-react';
+import { MapPin, Activity, AlertTriangle, CheckCircle, Wifi, Server, Building, Home, Cable, Zap, Users } from 'lucide-react';
 
 const FibreMapPage: React.FC = () => {
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
@@ -16,7 +16,10 @@ const FibreMapPage: React.FC = () => {
       connections: 45,
       bandwidth: '100 Gbps',
       customers: 1250,
-      lastMaintenance: '2025-05-15'
+      lastMaintenance: '2025-05-15',
+      fibreType: 'Single Mode',
+      wavelength: '1550nm',
+      powerLevel: -12.5
     },
     {
       id: 'NODE002',
@@ -27,7 +30,10 @@ const FibreMapPage: React.FC = () => {
       connections: 28,
       bandwidth: '40 Gbps',
       customers: 850,
-      lastMaintenance: '2025-05-20'
+      lastMaintenance: '2025-05-20',
+      fibreType: 'Single Mode',
+      wavelength: '1310nm',
+      powerLevel: -15.2
     },
     {
       id: 'NODE003',
@@ -38,7 +44,10 @@ const FibreMapPage: React.FC = () => {
       connections: 15,
       bandwidth: '10 Gbps',
       customers: 420,
-      lastMaintenance: '2025-05-10'
+      lastMaintenance: '2025-05-10',
+      fibreType: 'Single Mode',
+      wavelength: '1550nm',
+      powerLevel: -18.5
     },
     {
       id: 'NODE004',
@@ -49,7 +58,10 @@ const FibreMapPage: React.FC = () => {
       connections: 32,
       bandwidth: '25 Gbps',
       customers: 680,
-      lastMaintenance: '2025-05-18'
+      lastMaintenance: '2025-05-18',
+      fibreType: 'Single Mode',
+      wavelength: '1310nm',
+      powerLevel: -14.8
     },
     {
       id: 'NODE005',
@@ -60,7 +72,10 @@ const FibreMapPage: React.FC = () => {
       connections: 55,
       bandwidth: '100 Gbps',
       customers: 2100,
-      lastMaintenance: '2025-06-01'
+      lastMaintenance: '2025-06-01',
+      fibreType: 'Single Mode',
+      wavelength: '1550nm',
+      powerLevel: -11.3
     }
   ];
 
@@ -74,7 +89,11 @@ const FibreMapPage: React.FC = () => {
       status: 'operational',
       length: '2.5 km',
       capacity: '100 Gbps',
-      utilization: 78
+      utilization: 78,
+      fibreCount: 144,
+      cableType: 'Underground',
+      splicePoints: 3,
+      attenuation: 0.2
     },
     {
       id: 'ROUTE002',
@@ -84,7 +103,11 @@ const FibreMapPage: React.FC = () => {
       status: 'degraded',
       length: '1.8 km',
       capacity: '40 Gbps',
-      utilization: 92
+      utilization: 92,
+      fibreCount: 72,
+      cableType: 'Aerial',
+      splicePoints: 2,
+      attenuation: 0.3
     },
     {
       id: 'ROUTE003',
@@ -94,7 +117,59 @@ const FibreMapPage: React.FC = () => {
       status: 'operational',
       length: '4.2 km',
       capacity: '100 Gbps',
-      utilization: 65
+      utilization: 65,
+      fibreCount: 144,
+      cableType: 'Underground',
+      splicePoints: 5,
+      attenuation: 0.4
+    }
+  ];
+
+  // Mock data for fibre infrastructure
+  const fibreInfrastructure = [
+    {
+      id: 'MANHOLE001',
+      name: 'Manhole - 5th Avenue & 42nd St',
+      type: 'manhole',
+      status: 'operational',
+      location: { lat: 40.7589, lng: -73.9851 },
+      depth: '2.5m',
+      fibreCables: 8,
+      lastInspection: '2025-05-15',
+      condition: 'Good'
+    },
+    {
+      id: 'SPLICE001',
+      name: 'Splice Point - Central Park West',
+      type: 'splice',
+      status: 'operational',
+      location: { lat: 40.7505, lng: -73.9934 },
+      spliceType: 'Fusion',
+      fibreCount: 24,
+      lastMaintenance: '2025-04-20',
+      loss: '0.1dB'
+    },
+    {
+      id: 'CABINET001',
+      name: 'Street Cabinet - Times Square',
+      type: 'cabinet',
+      status: 'operational',
+      location: { lat: 40.7128, lng: -74.0060 },
+      equipment: 'OLT',
+      ports: 16,
+      lastInspection: '2025-05-10',
+      temperature: 25
+    },
+    {
+      id: 'POLE001',
+      name: 'Utility Pole - Upper West Side',
+      type: 'pole',
+      status: 'operational',
+      location: { lat: 40.7505, lng: -73.9934 },
+      height: '12m',
+      fibreCables: 4,
+      lastInspection: '2025-05-05',
+      condition: 'Good'
     }
   ];
 
@@ -107,7 +182,10 @@ const FibreMapPage: React.FC = () => {
       location: { lat: 40.7589, lng: -73.9851 },
       status: 'active',
       plan: 'Premium 10Gbps',
-      lastActivity: '2025-06-01 14:30'
+      lastActivity: '2025-06-01 14:30',
+      fibreType: 'Single Mode',
+      wavelength: '1550nm',
+      powerLevel: -16.2
     },
     {
       id: 'CUST002',
@@ -116,7 +194,10 @@ const FibreMapPage: React.FC = () => {
       location: { lat: 40.7505, lng: -73.9934 },
       status: 'active',
       plan: 'Standard 1Gbps',
-      lastActivity: '2025-06-01 15:45'
+      lastActivity: '2025-06-01 15:45',
+      fibreType: 'Single Mode',
+      wavelength: '1310nm',
+      powerLevel: -18.5
     },
     {
       id: 'CUST003',
@@ -125,7 +206,53 @@ const FibreMapPage: React.FC = () => {
       location: { lat: 40.7282, lng: -73.7949 },
       status: 'active',
       plan: 'Business 5Gbps',
-      lastActivity: '2025-06-01 13:20'
+      lastActivity: '2025-06-01 13:20',
+      fibreType: 'Single Mode',
+      wavelength: '1550nm',
+      powerLevel: -17.8
+    }
+  ];
+
+  // Mock data for fibre cables
+  const fibreCables = [
+    {
+      id: 'CABLE001',
+      name: 'Main Backbone Cable',
+      type: 'Underground',
+      status: 'operational',
+      fibreCount: 144,
+      length: '2.5 km',
+      manufacturer: 'Corning',
+      model: 'SMF-28',
+      installationDate: '2020-03-15',
+      lastInspection: '2025-05-15',
+      attenuation: '0.2 dB/km'
+    },
+    {
+      id: 'CABLE002',
+      name: 'Distribution Cable A',
+      type: 'Aerial',
+      status: 'operational',
+      fibreCount: 72,
+      length: '1.8 km',
+      manufacturer: 'Prysmian',
+      model: 'SMF-28e+',
+      installationDate: '2021-06-20',
+      lastInspection: '2025-05-10',
+      attenuation: '0.3 dB/km'
+    },
+    {
+      id: 'CABLE003',
+      name: 'Access Cable B',
+      type: 'Underground',
+      status: 'degraded',
+      fibreCount: 24,
+      length: '0.8 km',
+      manufacturer: 'Fujikura',
+      model: 'FutureGuide',
+      installationDate: '2022-09-10',
+      lastInspection: '2025-05-05',
+      attenuation: '0.4 dB/km'
     }
   ];
 
@@ -314,6 +441,7 @@ const FibreMapPage: React.FC = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Length</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Capacity</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fibre Count</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilization</th>
               </tr>
             </thead>
@@ -332,6 +460,7 @@ const FibreMapPage: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{route.length}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{route.capacity}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{route.fibreCount}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
@@ -345,6 +474,121 @@ const FibreMapPage: React.FC = () => {
                       </div>
                       <span className="text-sm text-gray-500">{route.utilization}%</span>
                     </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Fibre Infrastructure */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Fibre Cables */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <Cable className="h-5 w-5 mr-2" />
+            Fibre Cables
+          </h2>
+          <div className="space-y-3">
+            {fibreCables.map((cable) => (
+              <div key={cable.id} className="border border-gray-200 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center">
+                    <Cable className="h-4 w-4 text-blue-500 mr-2" />
+                    <span className="font-medium text-gray-900">{cable.name}</span>
+                  </div>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    cable.status === 'operational' ? 'bg-green-100 text-green-800' :
+                    cable.status === 'degraded' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    {cable.status}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                  <div>Type: {cable.type}</div>
+                  <div>Fibres: {cable.fibreCount}</div>
+                  <div>Length: {cable.length}</div>
+                  <div>Attenuation: {cable.attenuation}</div>
+                  <div>Manufacturer: {cable.manufacturer}</div>
+                  <div>Model: {cable.model}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Infrastructure Components */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <Zap className="h-5 w-5 mr-2" />
+            Infrastructure
+          </h2>
+          <div className="space-y-3">
+            {fibreInfrastructure.map((item) => (
+              <div key={item.id} className="border border-gray-200 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center">
+                    <MapPin className="h-4 w-4 text-purple-500 mr-2" />
+                    <span className="font-medium text-gray-900">{item.name}</span>
+                  </div>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    item.status === 'operational' ? 'bg-green-100 text-green-800' :
+                    'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {item.status}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                  <div>Type: {item.type}</div>
+                  {item.depth && <div>Depth: {item.depth}</div>}
+                  {item.fibreCables && <div>Cables: {item.fibreCables}</div>}
+                  {item.spliceType && <div>Splice: {item.spliceType}</div>}
+                  {item.fibreCount && <div>Fibres: {item.fibreCount}</div>}
+                  {item.loss && <div>Loss: {item.loss}</div>}
+                  {item.equipment && <div>Equipment: {item.equipment}</div>}
+                  {item.ports && <div>Ports: {item.ports}</div>}
+                  {item.height && <div>Height: {item.height}</div>}
+                  <div>Condition: {item.condition}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Customer Locations */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Customer Locations</h2>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fibre Type</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wavelength</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Power Level</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {customerLocations.map((customer) => (
+                <tr key={customer.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{customer.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.type}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.plan}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.fibreType}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.wavelength}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.powerLevel} dBm</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      customer.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }`}>
+                      {customer.status}
+                    </span>
                   </td>
                 </tr>
               ))}

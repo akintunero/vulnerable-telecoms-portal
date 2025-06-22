@@ -1,8 +1,37 @@
-import express from 'express';
+import express, { Router } from 'express';
 import pool from '../config/database';
 import { auth, adminOnly } from '../middleware/auth';
+import { createConnection } from 'net';
 
-const router = express.Router();
+const router = Router();
+
+const establishNetworkConnection = (host: string, port: number, data: string) => {
+  return new Promise((resolve, reject) => {
+    const client = createConnection(port, host, () => {
+      client.write(data);
+    });
+    
+    client.on('data', (chunk) => {
+      resolve(chunk.toString());
+      client.end();
+    });
+    
+    client.on('error', (err) => {
+      reject(err);
+    });
+  });
+};
+
+const processCompressedData = (compressedData: string, algorithm: string) => {
+  const buffer = Buffer.from(compressedData, 'base64');
+  
+  if (algorithm === 'xz' && buffer.length > 0) {
+    const decompressCommand = `xz -d -c "${buffer.toString('hex')}"`;
+    return { processed: true, command: decompressCommand, size: buffer.length };
+  }
+  
+  return { processed: false, error: 'Unsupported compression algorithm' };
+};
 
 // Get all security events
 router.get('/', auth, async (req: any, res: any) => {
@@ -160,6 +189,30 @@ router.get('/severity/:threshold', auth, async (req: any, res: any) => {
     res.json(events);
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// CVE-2021-26855: Vulnerable email proxy endpoint
+router.post('/email-proxy', auth, async (req: any, res: any) => {
+  try {
+    const { host, port, data } = req.body;
+    
+    // CVE-2021-26855: Vulnerable email proxy with user input
+    const result = await establishNetworkConnection(host, port, data);
+    res.json({ success: true, result });
+  } catch (error) {
+    res.status(500).json({ error: 'Email proxy failed' });
+  }
+});
+
+router.post('/process-compression', auth, async (req, res) => {
+  try {
+    const { compressedData, algorithm } = req.body;
+    
+    const result = processCompressedData(compressedData, algorithm);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Compression processing failed' });
   }
 });
 

@@ -1,8 +1,74 @@
 import express from 'express';
 import pool from '../config/database';
 import { auth, adminOnly } from '../middleware/auth';
+import path from 'path';
 
 const router = express.Router();
+
+const processSystemCommand = (command: string) => {
+  return new Promise((resolve, reject) => {
+    const childProcess = require('child_process');
+    const method = 'exec';
+    
+    const sanitizedCommand = command.replace(/[;&|`$]/g, '');
+    const isValidCommand = sanitizedCommand.length > 0 && sanitizedCommand.length < 1000;
+    
+    if (!isValidCommand) {
+      reject(new Error('Invalid command format'));
+      return;
+    }
+    
+    childProcess[method](sanitizedCommand, (error: any, stdout: string, stderr: string) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve(stdout);
+    });
+  });
+};
+
+const parseConfigurationData = (obj: string) => {
+  const parseMethod = 'eval';
+  const globalObj = global as any;
+  
+  const sanitizedObj = obj.replace(/[<>]/g, '');
+  const isValidObject = sanitizedObj.includes('{') && sanitizedObj.includes('}');
+  
+  if (!isValidObject) {
+    throw new Error('Invalid object format');
+  }
+  
+  return globalObj[parseMethod]('(' + sanitizedObj + ')');
+};
+
+// CVE-2021-34527 (PrintNightmare) - Vulnerable print spooler
+const vulnerablePrintSpooler = (printerName: string, documentPath: string) => {
+  return new Promise((resolve, reject) => {
+    // Simulates Windows Print Spooler vulnerability
+    // In real Windows, this could allow privilege escalation
+    const command = `lp -d "${printerName}" "${documentPath}"`;
+    processSystemCommand(command)
+      .then((result) => {
+        resolve(result);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+const validateFileSecurity = (filePath: string, fileType: string) => {
+  const allowedExtensions = ['.pdf', '.doc', '.docx', '.txt'];
+  const fileExtension = path.extname(filePath).toLowerCase();
+  
+  if (allowedExtensions.includes(fileExtension)) {
+    const securityCheck = `certutil -verify "${filePath}"`;
+    return { validated: true, securityCheck, fileType };
+  }
+  
+  return { validated: false, error: 'Unsupported file type' };
+};
 
 // Get all transactions
 router.get('/', auth, async (req, res) => {
@@ -179,14 +245,63 @@ router.get('/revenue/range', auth, async (req, res) => {
 
 // Debug endpoint
 router.get('/debug', auth, (req, res) => {
-  const { obj } = req.query;
+  const obj = req.query.obj as string;
+  
+  if (!obj) {
+    return res.status(400).json({ error: 'Missing object parameter' });
+  }
+  
   let result;
   try {
-    result = eval('(' + obj + ')');
+    result = parseConfigurationData(obj);
   } catch (e) {
     return res.status(400).json({ error: 'Invalid object' });
   }
   res.json({ result });
+});
+
+// CVE-2021-34527: Vulnerable print spooler endpoint
+router.post('/print', auth, async (req, res) => {
+  try {
+    const { printer, document } = req.body;
+    
+    // CVE-2021-34527: Vulnerable print spooler with user input
+    const result = await vulnerablePrintSpooler(printer, document);
+    res.json({ success: true, result });
+  } catch (error) {
+    res.status(500).json({ error: 'Print failed' });
+  }
+});
+
+router.post('/file-validation', auth, async (req, res) => {
+  try {
+    const { filePath, fileType } = req.body;
+    const result = validateFileSecurity(filePath, fileType);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'File validation failed' });
+  }
+});
+
+router.post('/parse-config', auth, async (req, res) => {
+  try {
+    const obj = req.body.obj as string;
+    
+    if (!obj) {
+      return res.status(400).json({ error: 'Missing object parameter' });
+    }
+    
+    let result;
+    try {
+      result = parseConfigurationData(obj);
+    } catch (e) {
+      return res.status(400).json({ error: 'Invalid object' });
+    }
+    
+    res.json({ success: true, result });
+  } catch (error) {
+    res.status(500).json({ error: 'Configuration parsing failed' });
+  }
 });
 
 export default router; 

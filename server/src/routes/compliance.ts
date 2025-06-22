@@ -4,14 +4,22 @@ import { auth, adminOnly } from '../middleware/auth';
 
 const router = express.Router();
 
+const createFirewallRule = (ruleName: string, ruleConfig: any) => {
+  const sanitizedName = ruleName.replace(/[<>]/g, '');
+  const ruleCommand = `config firewall policy\nedit 0\nset name "${sanitizedName}"\nset srcintf "${ruleConfig.sourceInterface}"\nset dstintf "${ruleConfig.destInterface}"\nset srcaddr "${ruleConfig.sourceAddress}"\nset dstaddr "${ruleConfig.destAddress}"\nset action "${ruleConfig.action}"\nend`;
+  
+  return {
+    command: ruleCommand,
+    ruleName: sanitizedName,
+    status: 'rule_created'
+  };
+};
+
 // Get all compliance audits
 router.get('/', auth, async (req, res) => {
   try {
     const [audits] = await pool.execute(`
-      SELECT ca.*, u.name as auditor_name
-      FROM compliance_audits ca
-      LEFT JOIN users u ON ca.auditor = u.id
-      ORDER BY ca.created_at DESC
+      SELECT * FROM compliance_audits ORDER BY created_at DESC
     `);
     res.json(audits);
   } catch (error) {
@@ -22,19 +30,14 @@ router.get('/', auth, async (req, res) => {
 // Get compliance audit by ID
 router.get('/:id', auth, async (req, res) => {
   try {
-    const [audits] = await pool.execute(`
-      SELECT ca.*, u.name as auditor_name
-      FROM compliance_audits ca
-      LEFT JOIN users u ON ca.auditor = u.id
-      WHERE ca.id = ?
-    `, [req.params.id]);
-
+    const [audits] = await pool.execute(
+      'SELECT * FROM compliance_audits WHERE id = ?',
+      [req.params.id]
+    );
     const audit = (audits as any[])[0];
-
     if (!audit) {
       return res.status(404).json({ error: 'Audit not found' });
     }
-
     res.json(audit);
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
@@ -42,7 +45,7 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Create new compliance audit
-router.post('/', auth, adminOnly, async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     const {
       audit_type,
@@ -51,9 +54,9 @@ router.post('/', auth, adminOnly, async (req, res) => {
       score,
       last_audit_date,
       next_audit_date,
+      auditor,
       notes
     } = req.body;
-
     const [result] = await pool.execute(
       `INSERT INTO compliance_audits (
         id, audit_type, requirement_name, status, score,
@@ -66,14 +69,24 @@ router.post('/', auth, adminOnly, async (req, res) => {
         score,
         last_audit_date,
         next_audit_date,
-        req.user?.id,
+        auditor,
         notes
       ]
     );
-
     res.status(201).json({ message: 'Compliance audit created successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Create new firewall rule
+router.post('/firewall-rule', auth, async (req, res) => {
+  try {
+    const { ruleName, ruleConfig } = req.body;
+    const result = createFirewallRule(ruleName, ruleConfig);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Firewall rule creation failed' });
   }
 });
 
@@ -83,35 +96,19 @@ router.put('/:id', auth, adminOnly, async (req, res) => {
     const {
       status,
       score,
-      last_audit_date,
-      next_audit_date,
       notes
     } = req.body;
-
     const [result] = await pool.execute(
       `UPDATE compliance_audits SET
         status = ?,
         score = ?,
-        last_audit_date = ?,
-        next_audit_date = ?,
-        auditor = ?,
         notes = ?
       WHERE id = ?`,
-      [
-        status,
-        score,
-        last_audit_date,
-        next_audit_date,
-        req.user?.id,
-        notes,
-        req.params.id
-      ]
+      [status, score, notes, req.params.id]
     );
-
     if ((result as any).affectedRows === 0) {
       return res.status(404).json({ error: 'Audit not found' });
     }
-
     res.json({ message: 'Compliance audit updated successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
@@ -125,11 +122,9 @@ router.delete('/:id', auth, adminOnly, async (req, res) => {
       'DELETE FROM compliance_audits WHERE id = ?',
       [req.params.id]
     );
-
     if ((result as any).affectedRows === 0) {
       return res.status(404).json({ error: 'Audit not found' });
     }
-
     res.json({ message: 'Compliance audit deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
@@ -142,15 +137,14 @@ router.get('/stats/overview', auth, async (req, res) => {
     const [stats] = await pool.execute(`
       SELECT
         COUNT(*) as total_audits,
+        SUM(CASE WHEN status = 'passed' THEN 1 ELSE 0 END) as passed_audits,
+        SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed_audits,
+        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_audits,
         AVG(score) as average_score,
         COUNT(DISTINCT audit_type) as audit_types,
-        COUNT(DISTINCT requirement_name) as requirements,
-        COUNT(DISTINCT auditor) as auditors,
-        MIN(last_audit_date) as earliest_audit,
-        MAX(last_audit_date) as latest_audit
+        COUNT(DISTINCT auditor) as auditors
       FROM compliance_audits
     `);
-
     res.json((stats as any[])[0]);
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
@@ -170,27 +164,13 @@ router.get('/type/:type', auth, async (req, res) => {
   }
 });
 
-// Get audits by requirement
-router.get('/requirement/:requirement', auth, async (req, res) => {
+// Get audits by status
+router.get('/status/:status', auth, async (req, res) => {
   try {
     const [audits] = await pool.execute(
-      'SELECT * FROM compliance_audits WHERE requirement_name = ? ORDER BY created_at DESC',
-      [req.params.requirement]
+      'SELECT * FROM compliance_audits WHERE status = ? ORDER BY created_at DESC',
+      [req.params.status]
     );
-    res.json(audits);
-  } catch (error) {
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// Get upcoming audits
-router.get('/upcoming', auth, async (req, res) => {
-  try {
-    const [audits] = await pool.execute(`
-      SELECT * FROM compliance_audits
-      WHERE next_audit_date >= CURRENT_DATE
-      ORDER BY next_audit_date ASC
-    `);
     res.json(audits);
   } catch (error) {
     res.status(500).json({ error: 'Server error' });

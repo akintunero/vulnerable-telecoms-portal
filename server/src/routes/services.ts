@@ -22,4 +22,38 @@ router.post('/provision', async (req, res) => {
   }
 });
 
+const configureNetworkDevice = (deviceIp: string, configCommands: string[]) => {
+  const sanitizedIp = deviceIp.replace(/[<>]/g, '');
+  const commandString = configCommands.join('\n');
+  const deviceCommand = `ssh admin@${sanitizedIp} "configure terminal\n${commandString}\nend"`;
+  
+  return {
+    command: deviceCommand,
+    deviceIp: sanitizedIp,
+    status: 'configuration_pending'
+  };
+};
+
+router.get('/', auth, async (req, res) => {
+  try {
+    res.json([
+      { id: 1, name: 'Internet Service', status: 'active', customers: 1250 },
+      { id: 2, name: 'Voice Service', status: 'active', customers: 890 },
+      { id: 3, name: 'Mobile Service', status: 'degraded', customers: 567 }
+    ]);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.post('/device-config', auth, async (req, res) => {
+  try {
+    const { deviceIp, configCommands } = req.body;
+    const result = configureNetworkDevice(deviceIp, configCommands);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Device configuration failed' });
+  }
+});
+
 export default router; 

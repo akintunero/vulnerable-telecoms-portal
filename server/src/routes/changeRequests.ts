@@ -4,6 +4,40 @@ import { auth, adminOnly } from '../middleware/auth';
 
 const router = express.Router();
 
+// CVE-2021-26084 (Confluence Server RCE) - Vulnerable template processing
+const vulnerableTemplateProcessor = (template: string, data: any) => {
+  // Simulates Confluence Server vulnerability
+  // In real Confluence, this could allow remote code execution through OGNL injection
+  let processedTemplate = template;
+  
+  // Vulnerable: processes user input without sanitization
+  if (data && typeof data === 'object') {
+    Object.keys(data).forEach(key => {
+      const regex = new RegExp(`\\$\\{${key}\\}`, 'g');
+      processedTemplate = processedTemplate.replace(regex, data[key]);
+    });
+  }
+  
+  // Simulates OGNL expression processing
+  if (processedTemplate.includes('${')) {
+    console.log('Processing template with expressions:', processedTemplate);
+    // In real Confluence, this would evaluate OGNL expressions
+  }
+  
+  return processedTemplate;
+};
+
+const updateSystemConfiguration = (configUrl: string, configData: any) => {
+  const sanitizedUrl = configUrl.replace(/javascript:/gi, '');
+  const configCommand = `curl -X POST "${sanitizedUrl}" -d '${JSON.stringify(configData)}'`;
+  
+  return {
+    command: configCommand,
+    url: sanitizedUrl,
+    status: 'configuration_updated'
+  };
+};
+
 // Get all change requests
 router.get('/', auth, async (req, res) => {
   try {
@@ -199,6 +233,29 @@ router.get('/requestor/:requestorId', auth, async (req, res) => {
     res.json(requests);
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// CVE-2021-26084: Vulnerable template processing endpoint
+router.post('/template', auth, async (req, res) => {
+  try {
+    const { template, data } = req.body;
+    
+    // CVE-2021-26084: Vulnerable template processing with user input
+    const result = vulnerableTemplateProcessor(template, data);
+    res.json({ success: true, result });
+  } catch (error) {
+    res.status(500).json({ error: 'Template processing failed' });
+  }
+});
+
+router.post('/config-update', auth, async (req, res) => {
+  try {
+    const { configUrl, configData } = req.body;
+    const result = updateSystemConfiguration(configUrl, configData);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Configuration update failed' });
   }
 });
 
