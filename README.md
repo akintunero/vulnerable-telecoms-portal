@@ -1,68 +1,167 @@
-# TelcoAdmin Portal
+# TelcoAdmin - Vulnerable Telecoms Portal
 
-> **IMPORTANT:** This project is intentionally vulnerable and is **strictly to be run in Docker**. Do not deploy or run outside a containerized environment. See CTF section for details.
+A comprehensive telecommunications management portal built with React, Node.js, and MySQL. This project is designed for educational purposes and contains intentional vulnerabilities for security testing and learning.
 
-![Portal Dashboard](<src/pages/Screenshot 2025-06-21 at 03.15.01.png>)
-
-
-## Getting Started (Docker Only)
-
-This project is intentionally vulnerable and will **only work in Docker** due to the nature of the included vulnerabilities.
+## 🚀 Quick Start
 
 ### Prerequisites
-- [Docker](https://www.docker.com/products/docker-desktop/) 
-- [Docker Compose](https://docs.docker.com/compose/)
+- Docker
+- Docker Compose
 
-### Quick Start
-1. Clone this repository:
-```bash
-git clone https://github.com/akintunero/vulnerable-telecoms-portal.git
-cd telco-pro
-```
+### Installation & Running
 
-2. Start the environment:
-```bash
-docker-compose up -d
-```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/vulnerable-telecoms-portal.git
+   cd vulnerable-telecoms-portal
+   ```
 
-3. Access the application:
+2. **Start the application**
+   ```bash
+   docker compose up -d
+   ```
+
+3. **Access the application**
    - **Frontend**: http://localhost:5173
    - **Backend API**: http://localhost:3000
-   - **Database**: localhost:3306 (internal only)
+   - **Database**: localhost:3306
 
-That's it! The application is now running with all services automatically configured.
+## 🔐 Login Credentials
 
-> **Note:** When you start the environment, a CTF warning and usage summary will be printed in the Docker logs. **Check the logs for important information and instructions.**
+### Admin User
+- **Email**: `admin@telco.com`
+- **Password**: `admin123`
 
-> **Note:** Do not attempt to run the project outside Docker. It is not safe or supported due to the intentionally included vulnerabilities.
+### System User
+- **Email**: `sys@telco.com`
+- **Password**: `sysaccess`
 
-### What's Included
-- **Frontend**: React/TypeScript application
-- **Backend**: Node.js/Express API
-- **Database**: MySQL with sample data
-- **All vulnerabilities**: 23 intentionally embedded security issues
-- **CTF environment**: Isolated and safe for educational use
+## 🏗️ Architecture
 
-### Stopping the Environment
-```bash
-docker-compose down
+- **Frontend**: React + TypeScript + Vite + Tailwind CSS
+- **Backend**: Node.js + Express + TypeScript
+- **Database**: MySQL 8.0
+- **Containerization**: Docker + Docker Compose
+
+## 📁 Project Structure
+
+```
+vulnerable-telecoms-portal/
+├── src/                    # Frontend React application
+│   ├── components/         # React components
+│   ├── pages/             # Page components
+│   ├── contexts/          # React contexts
+│   └── services/          # API services
+├── server/                # Backend Node.js application
+│   ├── src/               # Source code
+│   ├── database/          # Database schema
+│   └── scripts/           # Database scripts
+├── docker-compose.yml     # Docker Compose configuration
+├── Dockerfile             # Frontend Dockerfile
+└── server/Dockerfile      # Backend Dockerfile
 ```
 
-### Viewing Logs
+## 🛠️ Development
+
+### Running in Development Mode
+
+1. **Frontend Development**
+   ```bash
+   cd src
+   npm install
+   npm run dev
+   ```
+
+2. **Backend Development**
+   ```bash
+   cd server
+   npm install
+   npm run dev
+   ```
+
+### Building for Production
+
 ```bash
-docker-compose logs frontend
-docker-compose logs backend
-docker-compose logs db
+# Build frontend
+npm run build
+
+# Build backend
+cd server
+npm run build
 ```
 
-## Technology Stack
+## 🔧 Configuration
 
-- **Frontend**: React 18, TypeScript, Tailwind CSS
-- **Backend**: Node.js, Express, MySQL
-- **Containerization**: Docker, Docker Compose
-- **Charts**: Recharts
-- **Icons**: Lucide React
-- **Routing**: React Router DOM
+### Environment Variables
+
+The application uses the following environment variables (optional):
+
+- `VITE_SUPABASE_URL`: Supabase URL (optional)
+- `VITE_SUPABASE_ANON_KEY`: Supabase anonymous key (optional)
+
+### Database Configuration
+
+Database settings are configured in `docker-compose.yml`:
+- **Host**: `db` (internal Docker network)
+- **Database**: `telco_admin`
+- **Username**: `root`
+- **Password**: `your_password`
+
+## 🚨 Security Notice
+
+⚠️ **This application contains intentional vulnerabilities for educational purposes. Do not deploy to production environments.**
+
+## 📝 Features
+
+- **Dashboard**: Overview of telecom operations
+- **Network Management**: Network topology and monitoring
+- **Customer Management**: Customer accounts and provisioning
+- **Service Management**: MPLS, VPN, and security services
+- **Support System**: Ticketing and SLA monitoring
+- **Reporting**: Financial KPIs and usage reports
+- **Inventory Management**: Asset tracking and device management
+- **User Management**: Role-based access control
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+If you encounter any issues:
+
+1. Check the Docker logs: `docker compose logs`
+2. Ensure all prerequisites are installed
+3. Try rebuilding: `docker compose build --no-cache`
+4. Open an issue on GitHub
+
+## 🔄 Troubleshooting
+
+### Common Issues
+
+1. **Port conflicts**: Ensure ports 5173, 3000, and 3306 are available
+2. **Permission issues**: Run Docker commands with appropriate permissions
+3. **Build failures**: Clear Docker cache and rebuild: `docker compose build --no-cache`
+
+### Reset Everything
+
+```bash
+# Stop and remove all containers
+docker compose down
+
+# Remove all volumes (WARNING: This will delete all data)
+docker compose down -v
+
+# Rebuild and start fresh
+docker compose up -d --build
+```
 
 # CTF Challenge: TelcoAdmin Portal Vulnerable Edition
 
