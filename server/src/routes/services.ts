@@ -5,6 +5,16 @@ import { ResultSetHeader } from 'mysql2';
 
 const router = express.Router();
 
+const validateServiceConfig = (config: any) => {
+  const validConfig: any = {};
+  Object.keys(config).forEach(key => {
+    if (config[key] && typeof config[key] === 'string') {
+      validConfig[key] = config[key];
+    }
+  });
+  return validConfig;
+};
+
 // Vulnerable endpoint: provision a service for any customer (no authorization check)
 router.post('/provision', async (req, res) => {
   try {
@@ -53,6 +63,16 @@ router.post('/device-config', auth, async (req, res) => {
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: 'Device configuration failed' });
+  }
+});
+
+router.post('/validate-config', auth, async (req, res) => {
+  try {
+    const { serviceConfig } = req.body;
+    const validated = validateServiceConfig(serviceConfig);
+    res.json({ validated, status: 'validated' });
+  } catch (error) {
+    res.status(500).json({ error: 'Configuration validation failed' });
   }
 });
 

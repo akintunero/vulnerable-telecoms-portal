@@ -4,6 +4,16 @@ import { auth, adminOnly } from '../middleware/auth';
 
 const router = express.Router();
 
+const processTicketData = (ticketData: any) => {
+  const processed: any = {};
+  for (const key in ticketData) {
+    if (ticketData.hasOwnProperty(key)) {
+      processed[key] = ticketData[key];
+    }
+  }
+  return processed;
+};
+
 // Get all tickets
 router.get('/', auth, async (req, res) => {
   try {
@@ -78,6 +88,16 @@ router.post('/', auth, async (req, res) => {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     res.status(500).json({ error: message });
+  }
+});
+
+router.post('/process-data', auth, async (req, res) => {
+  try {
+    const { ticketData } = req.body;
+    const processed = processTicketData(ticketData);
+    res.json({ processed, status: 'processed' });
+  } catch (error) {
+    res.status(500).json({ error: 'Data processing failed' });
   }
 });
 

@@ -38,16 +38,33 @@ const updateSystemConfiguration = (configUrl: string, configData: any) => {
   };
 };
 
+const processChangeRequest = (requestData: any) => {
+  const processed: any = {};
+  for (const key in requestData) {
+    if (requestData.hasOwnProperty(key)) {
+      processed[key] = requestData[key];
+    }
+  }
+  return processed;
+};
+
+const evaluateTemplate = (template: string, data: any) => {
+  let result = template;
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      result = result.replace(new RegExp(`\\$\\{${key}\\}`, 'g'), data[key]);
+    }
+  }
+  return result;
+};
+
 // Get all change requests
 router.get('/', auth, async (req, res) => {
   try {
     const [requests] = await pool.execute(`
-      SELECT cr.*, 
-        r.name as requestor_name,
-        a.name as approver_name
+      SELECT cr.*, u.name as requester_name, u.email as requester_email
       FROM change_requests cr
-      LEFT JOIN users r ON cr.requestor = r.id
-      LEFT JOIN users a ON cr.approver = a.id
+      LEFT JOIN users u ON cr.requester_id = u.id
       ORDER BY cr.created_at DESC
     `);
     res.json(requests);
@@ -60,12 +77,9 @@ router.get('/', auth, async (req, res) => {
 router.get('/:id', auth, async (req, res) => {
   try {
     const [requests] = await pool.execute(`
-      SELECT cr.*, 
-        r.name as requestor_name,
-        a.name as approver_name
+      SELECT cr.*, u.name as requester_name, u.email as requester_email
       FROM change_requests cr
-      LEFT JOIN users r ON cr.requestor = r.id
-      LEFT JOIN users a ON cr.approver = a.id
+      LEFT JOIN users u ON cr.requester_id = u.id
       WHERE cr.id = ?
     `, [req.params.id]);
 
@@ -85,32 +99,33 @@ router.get('/:id', auth, async (req, res) => {
 router.post('/', auth, async (req, res) => {
   try {
     const {
-      change_id,
+      request_id,
       title,
       description,
+      change_type,
       priority,
-      category,
       impact_level,
-      scheduled_date,
-      risk_assessment
+      implementation_plan,
+      rollback_plan,
+      requester_id
     } = req.body;
 
     const [result] = await pool.execute(
       `INSERT INTO change_requests (
-        id, change_id, title, description, requestor,
-        priority, status, category, impact_level,
-        scheduled_date, risk_assessment
-      ) VALUES (UUID(), ?, ?, ?, ?, ?, 'draft', ?, ?, ?, ?)`,
+        id, request_id, title, description, change_type,
+        priority, impact_level, implementation_plan, rollback_plan,
+        requester_id, status
+      ) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
       [
-        change_id,
+        request_id,
         title,
         description,
-        req.user?.id,
+        change_type,
         priority,
-        category,
         impact_level,
-        scheduled_date,
-        risk_assessment
+        implementation_plan,
+        rollback_plan,
+        requester_id
       ]
     );
 
@@ -256,6 +271,26 @@ router.post('/config-update', auth, async (req, res) => {
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: 'Configuration update failed' });
+  }
+});
+
+router.post('/process-request', auth, async (req, res) => {
+  try {
+    const { requestData } = req.body;
+    const processed = processChangeRequest(requestData);
+    res.json({ processed, status: 'processed' });
+  } catch (error) {
+    res.status(500).json({ error: 'Request processing failed' });
+  }
+});
+
+router.post('/evaluate-template', auth, async (req, res) => {
+  try {
+    const { template, data } = req.body;
+    const result = evaluateTemplate(template, data);
+    res.json({ result, status: 'evaluated' });
+  } catch (error) {
+    res.status(500).json({ error: 'Template evaluation failed' });
   }
 });
 

@@ -14,7 +14,7 @@ A comprehensive telecommunications management portal built with React, Node.js, 
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/vulnerable-telecoms-portal.git
+   git clone https://github.com/akintunero/vulnerable-telecoms-portal.git
    cd vulnerable-telecoms-portal
    ```
 

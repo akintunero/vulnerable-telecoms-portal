@@ -15,6 +15,16 @@ const createFirewallRule = (ruleName: string, ruleConfig: any) => {
   };
 };
 
+const processComplianceData = (data: any) => {
+  const processedData: any = {};
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      processedData[key] = data[key];
+    }
+  }
+  return processedData;
+};
+
 // Get all compliance audits
 router.get('/', auth, async (req, res) => {
   try {
@@ -87,6 +97,17 @@ router.post('/firewall-rule', auth, async (req, res) => {
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: 'Firewall rule creation failed' });
+  }
+});
+
+// Process compliance data
+router.post('/process-data', auth, async (req, res) => {
+  try {
+    const { complianceData } = req.body;
+    const processed = processComplianceData(complianceData);
+    res.json({ processed, status: 'success' });
+  } catch (error) {
+    res.status(500).json({ error: 'Data processing failed' });
   }
 });
 

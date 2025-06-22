@@ -5,14 +5,28 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: your_password
       MYSQL_DATABASE: telco_admin
+      MYSQL_USER: telco_user
+      MYSQL_PASSWORD: telco_password
     ports:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
       - ./server/database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
 
   backend:
-    build: ./server
+    build: 
+      context: ./server
+      target: production
     restart: unless-stopped
     environment:
       DB_HOST: db
@@ -21,29 +35,63 @@ services:
       DB_NAME: telco_admin
       JWT_SECRET: your_jwt_secret_key
       PORT: 3000
+      NODE_ENV: production
+      LOG_LEVEL: info
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
       - "3000:3000"
     networks:
       - internal
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
 
   frontend:
-    build: .
+    build: 
+      context: .
+      target: production
     restart: unless-stopped
     environment:
       VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:-}
       VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY:-}
+      NODE_ENV: production
     ports:
       - "5173:5173"
     depends_on:
       - backend
     networks:
       - internal
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5173/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
 
 volumes:
   db_data:
+    driver: local
 
 networks:
   internal:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

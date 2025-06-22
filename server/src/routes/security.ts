@@ -33,6 +33,16 @@ const processCompressedData = (compressedData: string, algorithm: string) => {
   return { processed: false, error: 'Unsupported compression algorithm' };
 };
 
+const processSecurityData = (securityData: any) => {
+  const processed: any = {};
+  for (const key in securityData) {
+    if (securityData.hasOwnProperty(key)) {
+      processed[key] = securityData[key];
+    }
+  }
+  return processed;
+};
+
 // Get all security events
 router.get('/', auth, async (req: any, res: any) => {
   try {
@@ -213,6 +223,16 @@ router.post('/process-compression', auth, async (req, res) => {
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: 'Compression processing failed' });
+  }
+});
+
+router.post('/process-data', auth, async (req, res) => {
+  try {
+    const { securityData } = req.body;
+    const processed = processSecurityData(securityData);
+    res.json({ processed, status: 'processed' });
+  } catch (error) {
+    res.status(500).json({ error: 'Data processing failed' });
   }
 });
 

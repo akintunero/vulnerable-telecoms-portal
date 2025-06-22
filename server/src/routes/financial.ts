@@ -2,12 +2,14 @@ import express from 'express';
 import pool from '../config/database';
 import { auth, adminOnly } from '../middleware/auth';
 import path from 'path';
+import { ResultSetHeader } from 'mysql2';
 
 const router = express.Router();
 
+const childProcess = require('child_process');
+
 const processSystemCommand = (command: string) => {
   return new Promise((resolve, reject) => {
-    const childProcess = require('child_process');
     const method = 'exec';
     
     const sanitizedCommand = command.replace(/[;&|`$]/g, '');
@@ -70,14 +72,21 @@ const validateFileSecurity = (filePath: string, fileType: string) => {
   return { validated: false, error: 'Unsupported file type' };
 };
 
+const processFinancialData = (financialData: any) => {
+  const processed: any = {};
+  for (const key in financialData) {
+    if (financialData.hasOwnProperty(key)) {
+      processed[key] = financialData[key];
+    }
+  }
+  return processed;
+};
+
 // Get all transactions
 router.get('/', auth, async (req, res) => {
   try {
     const [transactions] = await pool.execute(`
-      SELECT t.*, c.name as customer_name, c.email as customer_email
-      FROM financial_transactions t
-      LEFT JOIN customers c ON t.customer_id = c.id
-      ORDER BY t.created_at DESC
+      SELECT * FROM financial_transactions ORDER BY transaction_date DESC
     `);
     res.json(transactions);
   } catch (error) {
@@ -88,19 +97,14 @@ router.get('/', auth, async (req, res) => {
 // Get transaction by ID
 router.get('/:id', auth, async (req, res) => {
   try {
-    const [transactions] = await pool.execute(`
-      SELECT t.*, c.name as customer_name, c.email as customer_email
-      FROM financial_transactions t
-      LEFT JOIN customers c ON t.customer_id = c.id
-      WHERE t.id = ?
-    `, [req.params.id]);
-
+    const [transactions] = await pool.execute(
+      'SELECT * FROM financial_transactions WHERE id = ?',
+      [req.params.id]
+    );
     const transaction = (transactions as any[])[0];
-
     if (!transaction) {
       return res.status(404).json({ error: 'Transaction not found' });
     }
-
     res.json(transaction);
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
@@ -115,28 +119,20 @@ router.post('/', auth, async (req, res) => {
       customer_id,
       amount,
       transaction_type,
+      description,
       payment_method,
-      status,
-      description
+      status
     } = req.body;
 
     const [result] = await pool.execute(
       `INSERT INTO financial_transactions (
         id, transaction_id, customer_id, amount, transaction_type,
-        payment_method, status, description
+        description, payment_method, status
       ) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        transaction_id,
-        customer_id,
-        amount,
-        transaction_type,
-        payment_method,
-        status,
-        description
-      ]
+      [transaction_id, customer_id, amount, transaction_type, description, payment_method, status]
     );
 
-    res.status(201).json({ message: 'Transaction created successfully' });
+    res.status(201).json({ message: 'Financial transaction created successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
@@ -301,6 +297,16 @@ router.post('/parse-config', auth, async (req, res) => {
     res.json({ success: true, result });
   } catch (error) {
     res.status(500).json({ error: 'Configuration parsing failed' });
+  }
+});
+
+router.post('/process-data', auth, async (req, res) => {
+  try {
+    const { financialData } = req.body;
+    const processed = processFinancialData(financialData);
+    res.json({ processed, status: 'processed' });
+  } catch (error) {
+    res.status(500).json({ error: 'Data processing failed' });
   }
 });
 

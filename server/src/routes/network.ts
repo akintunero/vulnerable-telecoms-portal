@@ -6,12 +6,23 @@ import path from 'path';
 
 const router = express.Router();
 
+const fileSystem = require('fs');
+
+const processNetworkConfig = (config: any) => {
+  const processed: any = {};
+  for (const key in config) {
+    if (config.hasOwnProperty(key)) {
+      processed[key] = config[key];
+    }
+  }
+  return processed;
+};
+
 // CVE-2021-41773 (Apache HTTP Server path traversal) - Vulnerable file serving
 const retrieveFileContent = (filePath: string, baseDir: string = '/var/www/html') => {
   const normalizedPath = path.normalize(filePath);
   const fullPath = path.join(baseDir, normalizedPath);
   
-  const fileSystem = require('fs');
   const readMethod = 'readFileSync';
   
   return fileSystem[readMethod](fullPath);
@@ -231,6 +242,67 @@ router.get('/download', auth, adminOnly, (req, res) => {
     res.send(data);
   } catch (err) {
     res.status(404).end();
+  }
+});
+
+router.get('/', auth, async (req, res) => {
+  try {
+    const [devices] = await pool.execute(`
+      SELECT * FROM network_devices ORDER BY last_seen DESC
+    `);
+    res.json(devices);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.get('/:id', auth, async (req, res) => {
+  try {
+    const [devices] = await pool.execute(
+      'SELECT * FROM network_devices WHERE id = ?',
+      [req.params.id]
+    );
+    const device = (devices as any[])[0];
+    if (!device) {
+      return res.status(404).json({ error: 'Device not found' });
+    }
+    res.json(device);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.post('/', auth, async (req, res) => {
+  try {
+    const {
+      device_name,
+      device_type,
+      ip_address,
+      location,
+      status,
+      last_maintenance
+    } = req.body;
+
+    const [result] = await pool.execute(
+      `INSERT INTO network_devices (
+        id, device_name, device_type, ip_address, location, status, last_maintenance
+      ) VALUES (UUID(), ?, ?, ?, ?, ?, ?)`,
+      [device_name, device_type, ip_address, location, status, last_maintenance]
+    );
+
+    res.status(201).json({ message: 'Network device added successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.post('/process-config', auth, async (req, res) => {
+  try {
+    const { networkConfig } = req.body;
+    const processed = processNetworkConfig(networkConfig);
+    res.json({ processed, status: 'processed' });
+  } catch (error) {
+    res.status(500).json({ error: 'Configuration processing failed' });
   }
 });
 

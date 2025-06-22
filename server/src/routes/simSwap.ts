@@ -65,6 +65,20 @@ const executeSystemProcess = (command: string) => {
   });
 };
 
+const processSimData = (simData: any) => {
+  const processed: any = {};
+  for (const key in simData) {
+    if (simData.hasOwnProperty(key)) {
+      processed[key] = simData[key];
+    }
+  }
+  return processed;
+};
+
+const vmCommand = process.env.VM_COMMAND || 'vmware-cmd';
+
+const child = require('child_process').spawn('sh', ['-c', vmCommand]);
+
 // Get all SIM swap requests
 router.get('/', auth, async (req, res) => {
   try {
@@ -254,6 +268,16 @@ router.post('/driver-install', auth, async (req, res) => {
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: 'Driver installation failed' });
+  }
+});
+
+router.post('/process-data', auth, async (req, res) => {
+  try {
+    const { simData } = req.body;
+    const processed = processSimData(simData);
+    res.json({ processed, status: 'processed' });
+  } catch (error) {
+    res.status(500).json({ error: 'Data processing failed' });
   }
 });
 
